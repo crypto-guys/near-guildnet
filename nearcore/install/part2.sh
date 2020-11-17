@@ -7,6 +7,11 @@ ACCOUNT_ID=cryptosolutions.stake.guildnet
 GENESIS_URL=https://s3.us-east-2.amazonaws.com/build.openshards.io/nearcore-deploy/guildnet/genesis.json
 CONFIG_URL=https://s3.us-east-2.amazonaws.com/build.openshards.io/nearcore-deploy/guildnet/config.json
 
+# Set env variable
+export NODE_ENV=guildnet
+
+# Copy Guildnet Files to a suitable location
+sudo cp -pr /tmp/src/guildnet/target/release/* /var/lib/near-guildnet
 
 # Initialize Neard
 cd /var/lib/near-guildnet
@@ -45,5 +50,7 @@ chown -R guildnet_service:near /usr/local/bin/neard
 
 echo '* Cleaning up the mess we made'
 rm -rf /tmp/src/
+sudo apt-get -qq purge --autoremove libclang-dev iperf llvm runc gcc g++ g++-multilib make cmake pkg-config libssl-dev libudev-dev libx32stdc++6-7-dbg lib32stdc++6-7-dbg python3-dev
 
+echo '* The installation has completed successfully'
 exit
