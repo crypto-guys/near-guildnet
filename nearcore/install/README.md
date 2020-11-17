@@ -2,7 +2,7 @@
 
 # Requirements
 
-- I use a base ubuntu 20.04 image. The only modification made to the os was to set up a username to use during the build process.
+- I use a base ubuntu 20.04 image. The only modification made to the os was to set up a username to use during the build process. This script will build a new validator node. **If you are upgrading a validator with data already on it this script will probably not work until I make more changes.**
 
 # Instructions
 
