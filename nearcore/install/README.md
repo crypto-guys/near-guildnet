@@ -6,6 +6,8 @@
 
 # Instructions
 
+- First edit part1.sh and enter your validators account it and save it.
+
 ```
 sudo chmod +x part*
 ./part1.sh
