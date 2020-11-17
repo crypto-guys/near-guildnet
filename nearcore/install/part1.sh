@@ -61,8 +61,5 @@ cd /tmp/src/guildnet
 git checkout $NEAR_VERSION
 make release
 
-# Set env variable
-export NODE_ENV=guildnet
-
-# Copy Guildnet Files
-sudo cp -pr /tmp/src/guildnet/target/release/* /var/lib/near-guildnet
+echo '* nearcore is now compiled in /tmp/src/guildnet/target/release'
+echo '* You should now run sudo su then run ./part2.sh'
