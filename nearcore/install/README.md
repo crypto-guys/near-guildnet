@@ -1,4 +1,4 @@
-# This is a custom bash script to compile nearcore from source for use on the NEAR Guildnet Network. 
+# This bash script will compile nearcore from source for use on the NEAR Guildnet Network. 
 
 # Requirements
 
@@ -6,11 +6,13 @@
 
 # Instructions
 
-- sudo chmod +x part*
-- ./part1.sh
-- sudo su
-- ./part2.sh
-- exit
+```
+sudo chmod +x part*
+./part1.sh
+sudo su
+./part2.sh
+exit
+```
 
 # Use
 
