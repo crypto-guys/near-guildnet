@@ -1,12 +1,11 @@
 #!/bin/bash
 set -eu
-echo "* Guildnet Install Script Running}"
-
+echo "* Starting the GUILDNET builder"
 
 # Script settings 
 RELEASE=$(lsb_release -c -s)
-NEAR_VERSION="tags/1.16.2-guildnet"
-NEAR_REPO="https://github.com/near/nearcore.git"
+NEAR_VERSION="1.16.2-guildnet"
+NEAR_REPO="https://github.com/crypto-guys/nearcore.git"
 ACCOUNT_ID=<ENTER YOUR VALIDATOR ID>
 CHAINID=guildnet
 CONFIG_URL="https://s3.us-east-2.amazonaws.com/build.openshards.io/nearcore-deploy/guildnet/config.json"
@@ -15,9 +14,8 @@ TIMEZONE=<FILL_THIS_IN>
 
 echo "* Setting up the service account"
 groupadd near
-adduser --system --disabled-login --disabled-password --ingroup near --no-create-home guildnet_service
-usermod -aG syslog guildnet_service
-usermod -aG near $USER
+adduser --system --disabled-login --disabled-password --ingroup near --no-create-home guildnet
+usermod -aG near guildnet
 
 echo "* Fixing the time settings and locale"
 timedatectl set-timezone $TIMEZONE
