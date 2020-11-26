@@ -7,6 +7,14 @@ RELEASE=$(lsb_release -c -s)
 NEAR_VERSION=1.16.2-guildnet
 NEAR_REPO="https://github.com/crypto-guys/nearcore.git"
 vm_name="compiler"
+SNAPD=$(which snapd)
+
+if [ -z $SNAPD ]
+then
+apt-get -qq install snapd
+snap install lxd
+# Populate init with preseed
+fi
 
 echo "* Launching LXC container to build in"
 lxc launch ubuntu:focal ${vm_name}
