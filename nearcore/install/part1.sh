@@ -5,61 +5,46 @@ echo "* Guildnet Install Script Running}"
 
 # Script settings 
 RELEASE=$(lsb_release -c -s)
-NEAR_VERSION="tags/1.16.0-rc.3"
+NEAR_VERSION="tags/1.16.2-guildnet"
 NEAR_REPO="https://github.com/near/nearcore.git"
 ACCOUNT_ID=<ENTER YOUR VALIDATOR ID>
 CHAINID=guildnet
-GENESIS_URL="https://s3.us-east-2.amazonaws.com/build.openshards.io/nearcore-deploy/guildnet/genesis.json"
 CONFIG_URL="https://s3.us-east-2.amazonaws.com/build.openshards.io/nearcore-deploy/guildnet/config.json"
-
-
+# Timezone list is available using command "timedatectl list-timezones" use appropriate timezone
+TIMEZONE=<FILL_THIS_IN>
 
 echo "* Setting up the service account"
-sudo groupadd near
-sudo adduser --system --disabled-login --disabled-password --ingroup near --no-create-home guildnet_service
-sudo usermod -aG syslog guildnet_service
-sudo usermod -aG near $USER
+groupadd near
+adduser --system --disabled-login --disabled-password --ingroup near --no-create-home guildnet_service
+usermod -aG syslog guildnet_service
+usermod -aG near $USER
 
 echo "* Fixing the time settings and locale"
+timedatectl set-timezone $TIMEZONE
+timedatectl set-ntp true
+# This generates the locale for english US UTF-8 if yours is different change it
+locale-gen en_US.UTF-8
+mkdir -p /var/lib/near/home/guildnet
 
-sudo timedatectl set-timezone America/Chicago
-sudo timedatectl set-ntp true
-sudo locale-gen en_US.UTF-8
-sudo mkdir -p /var/lib/near-guildnet
-sudo mkdir -p /var/lib/near-guildnet/home
-
-echo "* Install APT Packages"
+echo "* Install Required Packages"
 # Prerequsits
-sudo apt-get -qq update
-sudo apt-get -qq upgrade
-sudo apt-get -qq autoremove
-sudo apt-get -qq autoclean
-sudo apt-get -qq install git curl libclang-dev build-essential iperf llvm runc gcc g++ g++-multilib make cmake clang pkg-config libssl-dev libudev-dev libx32stdc++6-7-dbg lib32stdc++6-7-dbg python3-dev
-
-
-#################################################################################
-##
-##          Install Rust
-##
-#################################################################################
-echo '* Installing rust now'
-rm -rf /tmp/src/
-mkdir -p /tmp/src/rustup/
-cd /tmp/src/rustup/
-wget https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/rustup-init
-sudo chmod +x rustup-init
-./rustup-init --quiet -y --default-toolchain nightly
-source /home/$USER/.cargo/env
+apt-get -qq update
+apt-get -qq upgrade
+apt-get -qq autoremove
+apt-get -qq autoclean
+apt-get -qq install git curl libclang-dev build-essential iperf llvm runc gcc g++ g++-multilib make cmake clang pkg-config libssl-dev libudev-dev libx32stdc++6-7-dbg lib32stdc++6-7-dbg python3-dev
+snap install rustup --classic
 rustup update
 rustup component add clippy-preview
 rustup default nightly
 
-
 # Compile Nearcore
-git clone $NEAR_REPO /tmp/src/guildnet
-cd /tmp/src/guildnet
-git checkout $NEAR_VERSION
+rm -rf /tmp/src
+mkdir -p /tmp/src/guildnet
+cd /tmp/src/ && git clone $NEAR_REPO
+cd nearcore
+git switch $NEAR_VERSION
 make release
 
 echo '* nearcore is now compiled in /tmp/src/guildnet/target/release'
-echo '* You should now run sudo su then run ./part2.sh'
+echo '* You should now run ./part2.sh'
