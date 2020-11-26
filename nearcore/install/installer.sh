@@ -6,15 +6,27 @@ echo "* Guildnet Install Script Running"
 ACCOUNT_ID=<VALIDATOR_ACCOUT_ID_GOES_HERE>
 CONFIG_URL=https://s3.us-east-2.amazonaws.com/build.openshards.io/nearcore-deploy/guildnet/config.json
 
+echo "* Preparing the system"
+mkdir -p /var/lib/.near/home/guildnet
+mkdir -p /etc/exporters
+
+echo "* Setting up required accounts, groups, and privilages"
+adduser --system --disabled-login --disabled-password --ingroup syslog --no-create-home neard
+groupadd near
+usermod -aG syslog neard
+usermod -aG near neard
+chown neard:near -R /var/lib/near/home
+
+#echo "* Setting up the near-exporter user account"
+#adduser --system --disabled-login --disabled-password --ingroup near --no-create-home exporter
+#chown exporter:near -R /var/lib/exporter
 # Set env variable
 export NODE_ENV=guildnet
 
 # Copy Guildnet Files to a suitable location
 sudo mkdir -p /var/lib/near/home/guildnet
-sudo chmod 664 /var/lib/near/home/guildnet/*
-chmod 775 /var/lib/near
-chmod 775 /var/lib/near/home
-chmod 775 /var/lib/near/home/guildnet
+
+
 chown -R guildnet_validator:near -R /var/lib/near
 sudo cp -pr /tmp/src/guildnet/target/release/* /var/lib/near/home/guildnet
 
