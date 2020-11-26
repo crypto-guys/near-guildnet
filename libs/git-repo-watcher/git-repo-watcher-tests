@@ -1,0 +1,267 @@
+#!/usr/bin/env bash
+
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+main_script="git-repo-watcher"
+shunit_git="https://github.com/kward/shunit2"
+
+# The tests use the temp folder to store the test framework
+# and all generated git repositories
+temp_dir="/tmp/git-repo-watcher"
+stdout="$temp_dir/stdout.txt"
+shunit2_dir="$temp_dir/shunit2/"
+
+remote_repo="remote"
+remote_repo_clone="remote-clone"
+watched_clone="watched-clone"
+
+test_file_name="test-file"
+test_commit_message="Test commit message"
+
+# A verbose-flag can be passed ("-v")
+[[ "$1" == "-v" ]] && verbose=true && shift
+
+# Redirecting output
+if [[ "$verbose" ]]; then
+    exec 3>&1
+    exec 4>&2
+else
+    exec 3>/dev/null
+    exec 4>/dev/null
+fi
+
+# Create temp directory
+[[ ! -d "$temp_dir" ]] && mkdir "$temp_dir"
+
+# Checkout shunit2 unit test framework
+if [[ ! -d "$shunit2_dir" ]]; then
+    git clone --depth 1 "$shunit_git" "$shunit2_dir"
+fi
+
+# Prints a seperator. It helps to make the output more readable.
+printSeparator() {
+    local sep="$1"
+    [[ -z "$sep" ]] && sep="-"
+
+    # shellcheck disable=SC2034
+    for i in {1..75}; do local x=$x"$sep"; done && echo "$x"
+}
+
+# Removes created temp files and directories
+cleanupTempFiles() {
+    [[ -f "$stdout" ]] && rm "$stdout"
+    [[ -d "$temp_dir/$remote_repo" ]] && rm -rf "${temp_dir:?}/$remote_repo"
+    [[ -d "$temp_dir/$watched_clone" ]] && rm -rf "${temp_dir:?}/$watched_clone"
+    [[ -d "$temp_dir/$remote_repo_clone" ]] && rm -rf "${temp_dir:?}/$remote_repo_clone"
+    # I don't know why, but the following tests seem to start,
+    # before all temp files are deleted, so we pause a little
+    sleep 0.05
+}
+
+# Will be executed before each test
+# https://github.com/kward/shunit2#-setupteardown
+setUp() {
+    cd "$script_dir" || exit 1
+
+    # Create a fresh 'remote' git repository
+    git init --bare "$temp_dir/$remote_repo" 1>&3 2>&4
+    git clone "$temp_dir/$remote_repo" "$temp_dir/$remote_repo_clone" 1>&3 2>&4
+    pushOneFile 'README.md'
+    git clone "$temp_dir/$remote_repo" "$temp_dir/$watched_clone" 1>&3 2>&4
+}
+
+# Will be executed after each test
+tearDown() {
+    cleanupTempFiles
+    printSeparator
+    return 0
+}
+
+# Commiting and pushing file to remote repository
+#
+# $1 - File name
+# $2 - Commit message
+pushOneFile() {
+    local file="$1"
+    [[ -z "$file" ]] && file="$test_file_name"
+
+    local message="$2"
+    [[ -z "$message" ]] && message="$test_commit_message"
+
+    cd "$temp_dir/$remote_repo_clone" || exit 1
+    touch "$file"
+    git add . 1>&3 2>&4
+    git commit -m "$message" 1>&3 2>&4
+    git push 1>&3 2>&4
+}
+
+printBashVersion() {
+    echo && printSeparator "#"
+    echo "Testing on bash-version: '$BASH_VERSION'"
+    printSeparator "#" && echo && printSeparator
+}
+
+# Start the main git-repo-watcher-script
+#
+# $1 - override options
+startWatcher() {
+    local options=" -d $temp_dir/$watched_clone"
+    [[ -n "$1" ]] && options="$1"
+
+    # A short interval is used to guarantee multiple iterations
+    options="$options -i 0.1" # 0.1 seconds
+    eval "$script_dir/$main_script $options" &>$stdout &
+    watcher_pid=$!
+}
+
+# $1 - time to collect output
+collectOutput() {
+    local sleep_time=1
+    [[ -n "$1" ]] && sleep_time="$1"
+
+    # We wait one second to collect stdout of multiple
+    # iterations of the main watch loop.
+    sleep "$sleep_time"
+
+    # Killing the watcher script
+    disown "$watcher_pid"
+    kill "$watcher_pid" 2>/dev/null
+
+    # Reading the logfile
+    result=$(cat "$stdout")
+
+    [[ "$verbose" ]] && echo "$result"
+}
+
+# $1 - branch name
+createNewBranch() {
+    cd "$temp_dir/$remote_repo_clone" || exit 1
+    git checkout -b "$1" 1>&3 2>&4
+    git push --set-upstream origin "$1" 1>&3 2>&4
+}
+
+# -------------------------------------------------------------------- #
+
+# Should print the help screen, if no arguments given
+testHelpScreen() {
+    startWatcher " " # no arguments
+    collectOutput 0.1
+
+    assertContains "$result" "ERROR: Git directory (-d) not given!"
+    assertContains "$result" "The following options are available:"
+}
+
+# -------------------------------------------------------------------- #
+
+testNewCommitBeforeStart() {
+    pushOneFile
+    startWatcher
+    collectOutput
+
+    assertContains "$result" "1 file changed"
+}
+
+# -------------------------------------------------------------------- #
+
+testNewCommitAfterStart() {
+    startWatcher
+    pushOneFile
+    collectOutput
+
+    assertContains "$result" "1 file changed"
+}
+
+# -------------------------------------------------------------------- #
+
+testPulledHook() {
+    pushOneFile
+    startWatcher
+    collectOutput
+
+    assertContains "$result" "Changes pulled"
+}
+
+# -------------------------------------------------------------------- #
+
+testSpecialCharactersInCommitMessage() {
+    local message="!$%&/()=?{[]}#<>§|;:_,.-*+~'\"´\`"
+
+    pushOneFile "$test_file_name" "$message"
+    startWatcher
+    collectOutput
+
+    assertContains "$result" "$message"
+}
+
+# -------------------------------------------------------------------- #
+
+testNothingChangedHook() {
+    startWatcher
+    collectOutput 0.2
+
+    assertContains "$result" "Nothing changed"
+}
+
+# -------------------------------------------------------------------- #
+
+testStartupHook() {
+    startWatcher
+    collectOutput
+
+    assertContains "$result" "Watch started"
+}
+
+# -------------------------------------------------------------------- #
+
+testBranchChangedHook() {
+    local branch="new_branch"
+    createNewBranch "$branch"
+
+    startWatcher
+
+    sleep 0.5
+    cd "$temp_dir/$watched_clone" || exit 1
+    git checkout -t "origin/$branch" 1>&3 2>&4
+
+    collectOutput
+
+    assertContains "$result" "Branch changed"
+    assertContains "$result" "$branch"
+}
+
+# -------------------------------------------------------------------- #
+
+testNoUpstreamHook() {
+    startWatcher
+
+    sleep 0.5
+    cd "$temp_dir/$watched_clone" || exit 1
+    git checkout -b "new_branch" 1>&3 2>&4
+
+    collectOutput
+
+    assertContains "$result" "Upstream not set"
+}
+
+# -------------------------------------------------------------------- #
+
+testRelativePath() {
+    pushOneFile
+
+    # Use a relative path for the git directory
+    cd "$temp_dir" || exit 1
+    startWatcher "-d $watched_clone"
+
+    collectOutput
+
+    assertNotContains "$result" "No such file or directory"
+    assertContains "$result" "Changes pulled"
+}
+
+# -------------------------------------------------------------------- #
+
+printBashVersion
+
+# shellcheck source=/tmp/git-repo-watcher/shunit2
+. $shunit2_dir/shunit2
+
+# -------------------------------------------------------------------- #
