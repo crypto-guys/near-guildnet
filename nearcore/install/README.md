@@ -53,6 +53,9 @@ Would you like a YAML "lxd init" preseed to be printed? (yes/no) [default=no]:
 - The compile script should be run as root
 ```
 sudo su
+```
+usermod -aG lxd **/your current username/**
+```
 mkdir -p /tmp/guildnet && cd /tmp/guildnet
 wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/1.16.2-guildnet/nearcore/install/compiler 
 chmod +x compiler
