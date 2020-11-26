@@ -1,0 +1,51 @@
+#!/bin/bash
+set -eu
+echo "* Guildnet Install Script Running"
+
+# Script settings 
+ACCOUNT_ID=<VALIDATOR_ACCOUT_ID_GOES_HERE>
+CONFIG_URL=https://s3.us-east-2.amazonaws.com/build.openshards.io/nearcore-deploy/guildnet/config.json
+
+echo "* Setting up required accounts, groups, and privilages"
+sudo adduser --system --disabled-login --disabled-password --ingroup syslog --no-create-home neard-guildnet
+sudo groupadd near
+sudo usermod -aG syslog neard-guildnet
+sudo usermod -aG near neard-guildnet
+
+# Set env variable is not really required unless you use the near-cli on same machine
+# export NODE_ENV=guildnet
+
+# Copy Guildnet Files to a suitable location
+sudo mkdir -p /var/lib/near/guildnet
+sudo chown -R neard-guildnet:near -R /var/lib/near
+tar -C ~/ -xf nearcore1.16.2-guildnet.tar 
+sudo cp -p ~/binaries/* /usr/local/bin
+sudo rm -rf /usr/local/bin/compressed
+
+echo '* Getting the correct files and fixing permissions'
+wget $CONFIG_URL -O /var/lib/near/guildnet/config.json
+
+echo "* Creating systemd unit file for NEAR validator service"
+cat > /lib/systemd/system/neard-guildnet.service <<EOF
+[Unit]
+Description=NEAR GUILDNET Validator Service
+Documentation=https://github.com/nearprotocol/nearcore
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=neard-guildnet
+Group=near
+ExecStart=neard --home /var/lib/near/guildnet run
+StandardOutput=file:/var/log/guildnet.log
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+ln -s /lib/systemd/system/near-guildnet-validator.service /etc/systemd/system/multi-user.target.wants/near-guildnet-validator.service
+# Im not sure its required to own the file to run it from /usr/local/bin
+# chown -R guildnet_service:near /usr/local/bin/neard
+
+echo '* The installation has completed'
+exit
