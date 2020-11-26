@@ -10,7 +10,7 @@
 - Ubuntu 20.04 
 - snapd
 - lxd 
-- **Both snapd and lxd are only installed to compile the softare and are easily removed and cleaned from the system when complete**
+- **Both snapd and lxd are only installed to compile the software and are easily removed and cleaned from the system when complete**
 
 
     
