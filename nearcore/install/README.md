@@ -62,11 +62,19 @@ chmod +x compiler
 #### Install the service
 
 - The install script will create the directories, user account, systemd service, and set the permissions for you.
-
+- It will create a folder in /var/lib/near to store the validator home folder the correct genesis and config files will be there
 ```
 sudo su
 cd /tmp/guildnet
 wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/1.16.2-guildnet/nearcore/install/installer
+```
+The installer script has an option to enter the validator name so your validator key is generated correctly
+```
+sudo nano installer
+enter your validator id in the location provided near the top
+save and exit
+```
+```
 sudo chmod +x installer
 ./installer
 ```
