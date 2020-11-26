@@ -1,37 +1,67 @@
-# This bash script will compile nearcore from source for use on the NEAR Guildnet Network. 
+## Description
 
-# Requirements
+- The compile script will run inside of LXC containers so you should have LXD/LXC installed.
+- The compiler script will generate a tarball with the nearcore binaries to the users home folder that started the script
+- The installer script requires the tarball to function. The installer can be run on most ubuntu 20.04 installations provided its with the tarball.
+- We will create a systemd service that runs the compiled binaries with the non privilaged system account.
 
-- I use a base ubuntu 20.04 image. The only modification made to the os was to set up a username to use during the build process. This script will build a new validator node. **If you are upgrading a validator with data already on it this script will probably not work until I make more changes.**
-- The script is split into 2 parts. 
-  - Part 1: Install commpiling tools and compile the chosen nearcore version. 
-  - Part 2: Moves the files to their destinations and creates a systemd service
-    - Note: It is not absolutly required to run Part 1 and Part 2 on the same machine but you would need to copy /tmp/src/guildnet/target/release/ to the new machine if you wanted to do it that way.
+## Requirements
+
+- Ubuntu 20.04 
+- snap
+- lxd / lxc
+
     
-# Instructions
+## Instructions
 
-- First edit part1.sh and enter your validators accountId and save it.
+- The compile script will generate a tarball that can be used to start the node
+- The install script will create the directories, user account, systemd service, and set the permissions for you.
+- NOTE: The install script will initialize a new validator in the folder /var/lib/near/guildnet if it does not already exist
+- Both scripts should be run using an account with root access ```sudo su```
+#### Compile the source
 
 ```
-sudo chmod +x part*
-./part1.sh
 sudo su
-./part2.sh
-exit
+mkdir -p /tmp/guildnet && cd /tmp/guildnet
+wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/1.16.2-guildnet/nearcore/install/compiler 
+chmod +x compiler
+./compiler
 ```
 
-# Use
+#### Install the service
 
-### Enabling the service on boot
-- ```sudo systemctl enable near-guildnet-validator.service```
+```
+sudo su
+cd /tmp/guildnet
+wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/1.16.2-guildnet/nearcore/install/installer
+sudo chmod +x installer
+./installer
+```
 
-### Starting the service 
-- ```sudo systemctl start near-guildnet-validator.service```
+#### To Remove leftover data and builder tools from installation
+```
+lxc stop compiler
+lxc delete compiler
+snap remove lxc
+rm -rf /tmp/guildnet
+```
 
-### Check service status
-- ```sudo systemctl status near-guildnet-validator.service```
+## Use
 
-### Logging
+#### Enabling the service on boot
+- ```sudo systemctl enable neard-guildnet.service```
+
+#### Starting the service 
+- ```sudo systemctl start neard-guildnet.service```
+
+#### Stopping the service 
+- ```sudo systemctl stop neard-guildnet.service```
+
+#### Check service status
+- ```sudo systemctl status near-guildnet.service```
+
+#### Logging
 
 - ```tail /var/log/guildnet.log --follow```
 - ```cat /var/log/guildnet.log```
+- ```sudo journalctl -u neard-guildnet.service -x```
