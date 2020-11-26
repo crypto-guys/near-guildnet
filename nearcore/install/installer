@@ -2,29 +2,30 @@
 set -eu
 echo "* Guildnet Install Script Running"
 
-# Script settings 
-ACCOUNT_ID=<VALIDATOR_ACCOUT_ID_GOES_HERE>
-CONFIG_URL=https://s3.us-east-2.amazonaws.com/build.openshards.io/nearcore-deploy/guildnet/config.json
+# Script settings
+ACCOUNT_ID=stakeu.staked.guildnet
+CONFIG_URL="https://s3.us-east-2.amazonaws.com/build.openshards.io/nearcore-deploy/guildnet/config.json"
 
 echo "* Setting up required accounts, groups, and privilages"
-sudo adduser --system --disabled-login --disabled-password --ingroup syslog --no-create-home neard-guildnet
-sudo groupadd near
-sudo usermod -aG syslog neard-guildnet
-sudo usermod -aG near neard-guildnet
+adduser --system --disabled-login --disabled-password --ingroup syslog --no-create-home neard-guildnet
+groupadd near
+usermod -aG syslog neard-guildnet
+usermod -aG near neard-guildnet
 
 # Set env variable is not really required unless you use the near-cli on same machine
 # export NODE_ENV=guildnet
 
 # Copy Guildnet Files to a suitable location
-sudo mkdir -p /var/lib/near/guildnet
-sudo chown -R neard-guildnet:near -R /var/lib/near
-tar -C ~/ -xf nearcore1.16.2-guildnet.tar
+mkdir -p /var/lib/near/guildnet
+tar -xf nearcore1.16.2-guildnet.tar
+cd binaries
 # Remove the extra folder
-sudo rm -rf ~/binaries/compressed
-sudo cp ~/binaries/* /usr/local/bin
+rm -rf compressed/
+cp * /usr/local/bin
 
 echo '* Getting the correct files and fixing permissions'
 wget $CONFIG_URL -O /var/lib/near/guildnet/config.json
+chown -R neard-guildnet:near -R /var/lib/near
 
 echo "* Creating systemd unit file for NEAR validator service"
 cat > /lib/systemd/system/neard-guildnet.service <<EOF
