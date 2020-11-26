@@ -18,23 +18,33 @@
 - The compile script will generate a tarball that can be used to start the node
 - The install script will create the directories, user account, systemd service, and set the permissions for you.
 - NOTE: The install script will initialize a new validator in the folder /var/lib/near/guildnet if it does not already exist
-
+- Both scripts should be run using an account with root access ```sudo su```
 #### Compile the source
 
 ```
+sudo su
 mkdir -p /tmp/guildnet && cd /tmp/guildnet
 wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/1.16.2-guildnet/nearcore/install/compiler 
-sudo chmod +x compiler
+chmod +x compiler
 ./compiler
 ```
 
 #### Install the service
 
 ```
+sudo su
 cd /tmp/guildnet
 wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/1.16.2-guildnet/nearcore/install/installer
 sudo chmod +x installer
 ./installer
+```
+
+#### Remove data from installation
+```
+lxc stop compiler
+lxc delete compiler
+snap remove lxc
+rm -rf /tmp/guildnet
 ```
 
 ## Use
