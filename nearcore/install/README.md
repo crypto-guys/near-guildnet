@@ -23,18 +23,18 @@
 
 ```
 mkdir -p /tmp/guildnet && cd /tmp/guildnet
-wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/1.16.2-guildnet/nearcore/install/compiler > compiler.sh
-sudo chmod +x compiler.sh
-./compiler.sh
+wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/1.16.2-guildnet/nearcore/install/compiler 
+sudo chmod +x compiler
+./compiler
 ```
 
 #### Install the service
 
 ```
 cd /tmp/guildnet
-wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/1.16.2-guildnet/nearcore/install/installer > install.sh
-sudo chmod +x install.sh
-./install.sh
+wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/1.16.2-guildnet/nearcore/install/installer
+sudo chmod +x installer
+./installer
 ```
 
 ## Use
