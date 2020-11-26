@@ -1,0 +1,44 @@
+#!/bin/bash
+set -eu
+echo "* Starting the GUILDNET compile process"
+
+# Script settings 
+RELEASE=$(lsb_release -c -s)
+NEAR_VERSION=1.16.2-guildnet
+NEAR_REPO="https://github.com/crypto-guys/nearcore.git"
+vm_name="script-test"
+
+echo "* Launching LXC container to build in"
+lxc launch ubuntu:focal ${vm_name}
+echo "* Pausing for 60 seconds while the container initializes"
+sleep 60
+#lxc exec script-test /bin/bash --force-noninteractive
+
+echo "* Install Required Packages"
+lxc exec ${vm_name} -- /usr/bin/apt-get -qq update
+lxc exec ${vm_name} -- /usr/bin/apt-get -qq upgrade
+lxc exec ${vm_name} -- /usr/bin/apt-get -qq autoremove
+lxc exec ${vm_name} -- /usr/bin/apt-get -qq autoclean
+lxc exec ${vm_name} -- /usr/bin/apt-get -qq install git curl libclang-dev build-essential iperf llvm runc gcc g++ g++-multilib make cmake clang pkg-config libssl-dev libudev-dev libx32stdc++6-7-dbg lib32stdc++6-7-dbg python3-dev
+lxc exec ${vm_name} -- /usr/bin/snap install rustup --classic
+lxc exec ${vm_name} -- /snap/bin/rustup default nightly
+lxc exec ${vm_name} -- /snap/bin/rustup component add clippy-preview
+lxc exec ${vm_name} -- /snap/bin/rustup update
+
+echo "* Cloning the github source"
+lxc exec ${vm_name} -- sh -c "rm -rf /tmp/src && mkdir -p /tmp/src/ && git clone $NEAR_REPO /tmp/src/nearcore"
+echo "* Switching Version"
+lxc exec ${vm_name} -- sh -c "cd /tmp/src/nearcore && git switch 1.16.2-guildnet"
+echo "* Attempting to compile"
+lxc exec ${vm_name} -- sh -c "cd /tmp/src/nearcore && make release"
+
+echo "* Creating tarball for easy retrieval"
+lxc exec ${vm_name} -- sh -c "mkdir -p /binaries/compressed && cd /tmp/src/nearcore/target/release/ && cp -p genesis-csv-to-json keypair-generator near near-vm-runner-standalone neard state-viewer store-validator /binaries"
+lxc exec ${vm_name} -- sh -c "cd /binaries/compressed && tar -cvf nearcore1.16.2-guildnet.tar -C / binaries"
+
+echo "* The nearcore binaries are now in a tarball in the lxc container at /binaries/compressed/nearcore1.16.2-guildnet.tar"
+echo "* Retriving the tarball and storing in the local home directory ~/"
+lxc file pull script-test/binaries/compressed/nearcore1.16.2-guildnet.tar ~/
+ls ~/ | grep guildnet
+
+echo "* The build was successful"
