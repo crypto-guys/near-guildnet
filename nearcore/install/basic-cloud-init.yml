@@ -1,0 +1,31 @@
+#cloud-config
+hostname: guildnet
+package_update: true
+package_upgrade: true
+packages: [curl, wget, git, htop, iperf, nano, python3, python3-pip, debian-keyring, zip, unzip, gzip, wget, nano, nmap, mlocate]
+preserve_sources_list: true
+disable_suites: [$RELEASE-updates, $RELEASE-backports, $RELEASE]
+write_files:
+  - encoding: b64
+    content: < base 64 encoded sshd_config file >
+    owner: root:root
+    path: /etc/ssh/sshd_config
+    permissions: '0644' 
+groups:
+  - cloud-users: []
+  - docker: []
+users:
+  - name: <username>
+    gecos: <Name>
+    Password: "$6$rounds=4096" hashed password
+    no_user_group: false
+    homedir: /home/<username>
+    primary_group: <username>
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: [users, cloud-users, adm, video, plugdev, dip, netdev]
+    shell: /bin/bash
+    ssh_authorized_keys:
+      - ssh-rsa <goes here>
+    inactive: false
+    lock_passwd: false 
+    uid: 1000
