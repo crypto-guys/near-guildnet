@@ -38,7 +38,7 @@ lxc exec ${vm_name} -- sh -c "cd /binaries/compressed && tar -cvf nearcore1.16.2
 
 echo "* The nearcore binaries are now in a tarball in the lxc container at /binaries/compressed/nearcore1.16.2-guildnet.tar"
 echo "* Retriving the tarball and storing in the local home directory ~/"
-lxc file pull script-test/binaries/compressed/nearcore1.16.2-guildnet.tar ~/
+lxc file pull ${vm_name}/binaries/compressed/nearcore1.16.2-guildnet.tar ~/
 ls ~/ | grep guildnet
 
 echo "* The build was successful"
