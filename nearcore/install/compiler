@@ -6,7 +6,7 @@ echo "* Starting the GUILDNET compile process"
 RELEASE=$(lsb_release -c -s)
 NEAR_VERSION=1.16.2-guildnet
 NEAR_REPO="https://github.com/crypto-guys/nearcore.git"
-vm_name="script-test"
+vm_name="compiler"
 
 echo "* Launching LXC container to build in"
 lxc launch ubuntu:focal ${vm_name}
