@@ -18,9 +18,10 @@ sudo usermod -aG near neard-guildnet
 # Copy Guildnet Files to a suitable location
 sudo mkdir -p /var/lib/near/guildnet
 sudo chown -R neard-guildnet:near -R /var/lib/near
-tar -C ~/ -xf nearcore1.16.2-guildnet.tar 
-sudo cp -p ~/binaries/* /usr/local/bin
-sudo rm -rf /usr/local/bin/compressed
+tar -C ~/ -xf nearcore1.16.2-guildnet.tar
+# Remove the extra folder
+sudo rm -rf ~/binaries/compressed
+sudo cp ~/binaries/* /usr/local/bin
 
 echo '* Getting the correct files and fixing permissions'
 wget $CONFIG_URL -O /var/lib/near/guildnet/config.json
