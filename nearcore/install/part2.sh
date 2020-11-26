@@ -1,29 +1,30 @@
 #!/bin/bash
 set -eu
-echo "* Guildnet Install Script Running Part 2"
+echo "* Guildnet Install Script Running"
 
 # Script settings 
-ACCOUNT_ID=cryptosolutions.stake.guildnet
-GENESIS_URL=https://s3.us-east-2.amazonaws.com/build.openshards.io/nearcore-deploy/guildnet/genesis.json
+ACCOUNT_ID=<VALIDATOR_ACCOUT_ID_GOES_HERE>
 CONFIG_URL=https://s3.us-east-2.amazonaws.com/build.openshards.io/nearcore-deploy/guildnet/config.json
 
 # Set env variable
 export NODE_ENV=guildnet
 
 # Copy Guildnet Files to a suitable location
-sudo cp -pr /tmp/src/guildnet/target/release/* /var/lib/near-guildnet
+sudo mkdir -p /var/lib/near/home/guildnet
+sudo chmod 664 /var/lib/near/home/guildnet/*
+chmod 775 /var/lib/near
+chmod 775 /var/lib/near/home
+chmod 775 /var/lib/near/home/guildnet
+chown -R guildnet_validator:near -R /var/lib/near
+sudo cp -pr /tmp/src/guildnet/target/release/* /var/lib/near/home/guildnet
 
 # Initialize Neard
-cd /var/lib/near-guildnet
-./neard --home /var/lib/near-guildnet/home init --account-id=$ACCOUNT_ID --chain-id=guildnet
+cd /var/lib/near/home/guildnet
+./neard --home /var/lib/near/home/guildnet init --download-genesis --account-id=$ACCOUNT_ID --chain-id=guildnet
 
 echo '* Getting the correct files and fixing permissions'
-wget $GENESIS_URL -O /var/lib/near-guildnet/home/genesis.json
 wget $CONFIG_URL -O /var/lib/near-guildnet/home/config.json
-sudo chmod 664 /var/lib/near-guildnet/home/*
-chmod 775 /var/lib/near-guildnet/home
-chmod 775 /var/lib/near-guildnet/
-chown -R guildnet_service:near -R /var/lib/near-guildnet
+
 
 
 echo "* Creating systemd unit file for NEAR validator service"
@@ -35,16 +36,16 @@ Wants=network-online.target
 After=network-online.target
 
 [Service]
-User=guildnet_service
+User=guildnet_validator
 Group=near
-ExecStart=neard --home /var/lib/near-guildnet/home run
+ExecStart=neard --home /var/lib/near/home/guildnet run
 StandardOutput=file:/var/log/guildnet.log
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
-ln -s /var/lib/near-guildnet/neard /usr/local/bin/neard
+ln -s /var/lib/near/home/guildnet/neard /usr/local/bin/neard
 ln -s /lib/systemd/system/near-guildnet-validator.service /etc/systemd/system/multi-user.target.wants/near-guildnet-validator.service
 chown -R guildnet_service:near /usr/local/bin/neard
 
