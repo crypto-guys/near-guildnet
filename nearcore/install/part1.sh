@@ -32,13 +32,13 @@ apt-get -qq autoremove
 apt-get -qq autoclean
 apt-get -qq install git curl libclang-dev build-essential iperf llvm runc gcc g++ g++-multilib make cmake clang pkg-config libssl-dev libudev-dev libx32stdc++6-7-dbg lib32stdc++6-7-dbg python3-dev
 snap install rustup --classic
-rustup update
-rustup component add clippy-preview
 rustup default nightly
+rustup component add clippy-preview
+rustup update
 
 # Compile Nearcore
 rm -rf /tmp/src
-mkdir -p /tmp/src/guildnet
+mkdir -p /tmp/src/
 cd /tmp/src/ && git clone $NEAR_REPO
 cd nearcore
 git switch $NEAR_VERSION
