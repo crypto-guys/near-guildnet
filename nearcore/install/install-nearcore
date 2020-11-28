@@ -1,30 +1,35 @@
 #!/bin/bash
 set -eu
-echo "* Guildnet Install Script Running"
+echo "* Guildnet Install Script Starting"
+
+echo " What is your validator accountId?"
+read VALIDATOR_ID
 
 # Script settings
-ACCOUNT_ID=<your_validator_account>
 CONFIG_URL="https://s3.us-east-2.amazonaws.com/build.openshards.io/nearcore-deploy/guildnet/config.json"
+TARBALL=$(cat nearcore-version.txt)
 
 echo "* Setting up required accounts, groups, and privilages"
 adduser --system --disabled-login --disabled-password --ingroup syslog --no-create-home neard-guildnet
 groupadd near
 usermod -aG syslog neard-guildnet
 usermod -aG near neard-guildnet
+adduser -U -G adm -s /bin/bash -m $USER_ID
+usermod -aG sudo $USER_ID && usermod -aG near $USER_ID
 
 # Set env variable is not really required unless you use the near-cli on same machine
 # export NODE_ENV=guildnet
 
 # Copy Guildnet Files to a suitable location
 mkdir -p /var/lib/near/guildnet
-tar -xf nearcore1.16.2-guildnet.tar
+tar -xf $TARBALL
 cd binaries
 # Remove the extra folder
 rm -rf compressed/
 cp * /usr/local/bin
 
 echo '* Getting the correct files and fixing permissions'
-neard --home /var/lib/near/guildnet/ --download-genesis --chain-id guildnet --account-id $ACCOUNT_ID
+neard --home /var/lib/near/guildnet/ --download-genesis --chain-id guildnet --account-id $VALIDATOR_ID
 wget $CONFIG_URL -O /var/lib/near/guildnet/config.json
 chown -R neard-guildnet:near -R /var/lib/near
 
