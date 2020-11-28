@@ -7,7 +7,7 @@ read VALIDATOR_ID
 
 # Script settings
 CONFIG_URL="https://s3.us-east-2.amazonaws.com/build.openshards.io/nearcore-deploy/guildnet/config.json"
-TARBALL=$(cat nearcore-version.txt)
+TARBALL=$(cat nearcore_tarfile_path.txt)
 
 echo "* Setting up required accounts, groups, and privilages"
 adduser --system --disabled-login --disabled-password --ingroup syslog --no-create-home neard-guildnet
