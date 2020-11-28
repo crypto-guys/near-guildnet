@@ -40,7 +40,8 @@ After=network-online.target
 User=neard-guildnet
 Group=near
 ExecStart=neard --home /var/lib/near/guildnet run
-StandardOutput=file:/var/log/guildnet.log
+# Uncomment the below line to log to a file rather than the journal
+#StandardOutput=append:/var/log/guildnet.log
 
 [Install]
 WantedBy=multi-user.target
@@ -49,4 +50,4 @@ EOF
 ln -s /lib/systemd/system/near-guildnet-validator.service /etc/systemd/system/multi-user.target.wants/near-guildnet-validator.service
 
 echo '* The installation has completed'
-exit
+
