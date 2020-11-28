@@ -2,7 +2,7 @@
 hostname: guildnet
 package_update: true
 package_upgrade: true
-packages: [curl, wget, git, htop, iperf, nano, python3, python3-pip, debian-keyring, zip, unzip, gzip, wget, nano, nmap, mlocate]
+packages: [curl, wget, git, htop, iperf, nano, python3, python3-pip, debian-keyring, zip, unzip, gzip, wget, nano, nmap, mlocate, net-tools, inetutils-traceroute, apt-transport-tor,  apt-transport-https, software-properties, fail2ban, rkhunter]
 preserve_sources_list: true
 disable_suites: [$RELEASE-updates, $RELEASE-backports, $RELEASE]
 write_files:
