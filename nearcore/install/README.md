@@ -102,11 +102,18 @@ rm -rf /tmp/guildnet
 #### Stopping the service 
 - ```sudo systemctl stop neard-guildnet.service```
 
-#### Check service status
+#### Check service status 
 - ```sudo systemctl status near-guildnet.service```
 
 #### Logging
 
-- ```tail /var/log/guildnet.log --follow```
-- ```cat /var/log/guildnet.log```
-- ```sudo journalctl -u neard-guildnet.service -x```
+**By default all logging information is sent to the journal. For more information see journalctl --help**
+
+If you prefer logs to go to a file uncomment the noted line in the neard-guildnet unit file.
+
+- Quick check to see the validators most recent status
+    ```sudo systemctl status near-guildnet.service```
+
+- View all logs available
+    ```journalctl -u neard-guildnet -x```
+
