@@ -108,7 +108,7 @@ wget $CONFIG_URL -O /var/lib/near/guildnet/config.json
 sudo chown -R neard-guildnet:near -R /var/lib/near
 
 echo "* Creating systemd unit file for NEAR validator service"
-cat > /lib/systemd/system/neard-guildnet.service <<EOF
+sudo cat > /lib/systemd/system/neard-guildnet.service <<EOF
 [Unit]
 Description=NEAR GUILDNET Validator Service
 Documentation=https://github.com/nearprotocol/nearcore
