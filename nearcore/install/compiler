@@ -9,15 +9,47 @@ NEAR_REPO="https://github.com/crypto-guys/nearcore.git"
 vm_name="compiler"
 
 echo "* Initializing LXD"
-LXD_CONFIG=lxd-init-preseed.yaml
-snap install lxd 
-wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/main/nearcore/install/lxd-init-preseed.yaml
-lxd init --preseed $LXD_CONFIG
+sudo snap install lxd 
+sudo usermod -aG lxd $USER
+
+    cat <<EOF | sudo lxd init --preseed
+config:
+  images.auto_update_interval: 15
+storage_pools:
+- config:
+    size: 20GB
+  description: ""
+  name: default
+  driver: zfs
+networks:
+- name: lxdbr0
+  type: bridge
+  config:
+    ipv4.address: auto
+    ipv6.address: none
+profiles:
+- config: {}
+  description: ""
+  devices:
+    eth0:
+      name: eth0
+      network: lxdbr0
+      type: nic
+    root:
+      path: /
+      pool: default
+      type: disk
+  name: default
+cluster: null
+EOF
+
+sudo snap restart lxd
+sleep 2
 
 echo "* Launching LXC container to build in"
 lxc launch ubuntu:focal ${vm_name}
-echo "* Pausing for 60 seconds while the container initializes"
-sleep 60
+echo "* Pausing for while the container initializes"
+sleep 45
 
 echo "* Install Required Packages"
 lxc exec ${vm_name} -- /usr/bin/apt-get -qq update
@@ -42,11 +74,9 @@ lxc exec ${vm_name} -- sh -c "mkdir -p /binaries/compressed && cd /tmp/src/nearc
 lxc exec ${vm_name} -- sh -c "cd /binaries/compressed && tar -cvf nearcore1.16.2-guildnet.tar -C / binaries"
 
 echo "* Retriving the tarball and storing in /src/nearcore-guildnet"
-mkdir /src/nearcore-guildnet
-lxc file pull ${vm_name}/binaries/compressed/nearcore1.16.2-guildnet.tar /src/nearcore-guildnet/nearcore1.16.2-guildnet.tar
-ls /src/nearcore-guildnet/ 
-
-echo "* The build was successful"
+mkdir -p nearcore-guildnet
+lxc file pull ${vm_name}/binaries/compressed/nearcore1.16.2-guildnet.tar nearcore-guildnet/nearcore-guildnet.tar
+ls nearcore-guildnet/
 
 echo "* Guildnet Install Script Starting"
 
@@ -58,24 +88,24 @@ CONFIG_URL="https://s3.us-east-2.amazonaws.com/build.openshards.io/nearcore-depl
 TARBALL=$(nearcore-guildnet.tar)
 
 echo "* Setting up required accounts, groups, and privilages"
-groupadd near
-adduser --system --disabled-login --disabled-password --ingroup near --no-create-home neard-guildnet
+sudo groupadd near
+sudo adduser --system --disabled-login --disabled-password --ingroup near --no-create-home neard-guildnet
 
 # Set env variable is not really required unless you use the near-cli on same machine
 # export NODE_ENV=guildnet
 
 # Copy Guildnet Files to a suitable location
-mkdir -p /var/lib/near/guildnet
+sudo mkdir -p /var/lib/near/guildnet
 tar -xf $TARBALL
 cd binaries
 # Remove the extra folder
 rm -rf compressed/
-cp * /usr/local/bin
+sudo cp * /usr/local/bin
 
 echo '* Getting the correct files and fixing permissions'
 neard --home /var/lib/near/guildnet/ --download-genesis --chain-id guildnet --account-id $VALIDATOR_ID
 wget $CONFIG_URL -O /var/lib/near/guildnet/config.json
-chown -R neard-guildnet:near -R /var/lib/near
+sudo chown -R neard-guildnet:near -R /var/lib/near
 
 echo "* Creating systemd unit file for NEAR validator service"
 cat > /lib/systemd/system/neard-guildnet.service <<EOF
@@ -86,16 +116,18 @@ Wants=network-online.target
 After=network-online.target
 
 [Service]
-User=neard-guildnet
+Type=exec
+User=near-validator
 Group=near
-ExecStart=neard --home /var/lib/near/guildnet run
-# Uncomment the below line to log to a file rather than the journal
+ExecStart=neard --home /var/lib/near/validator/home run
+Restart=on-failure
+RestartSec=45
 #StandardOutput=append:/var/log/guildnet.log
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
-ln -s /lib/systemd/system/near-guildnet-validator.service /etc/systemd/system/multi-user.target.wants/near-guildnet-validator.service
+sudo ln -s /lib/systemd/system/near-guildnet-validator.service /etc/systemd/system/multi-user.target.wants/near-guildnet-validator.service
 
 echo '* The installation has completed'
