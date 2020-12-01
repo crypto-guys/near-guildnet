@@ -8,14 +8,42 @@ NEAR_VERSION=1.16.2-guildnet
 NEAR_REPO="https://github.com/crypto-guys/nearcore.git"
 vm_name="compiler"
 sudo usermod -aG lxd $USER
+sudo snap install lxd
+
 # echo "* Initializing LXD"
     cat <<EOF | sudo lxd init --preseed
-CONFIG=$(cat lxd-init-preseed.yaml)
-sudo snap install lxd 
-sudo usermod -aG lxd $USER
-wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/main/nearcore/install/lxd-init-preseed.yaml
-sudo lxd init --preseed $LXD_CONFIG
+config:
+  images.auto_update_interval: 15
+storage_pools:
+- config:
+    size: 20GB
+  description: ""
+  name: default
+  driver: zfs
+networks:
+- name: lxdbr0
+  type: bridge
+  config:
+    ipv4.address: auto
+    ipv6.address: none
+profiles:
+- config: {}
+  description: ""
+  devices:
+    eth0:
+      name: eth0
+      network: lxdbr0
+      type: nic
+    root:
+      path: /
+      pool: default
+      type: disk
+  name: default
+cluster: null
+EOF
 
+sudo snap restart lxd
+sleep 2
 echo "* Launching LXC container to build in"
 lxc launch ubuntu:focal ${vm_name}
 echo "* Pausing for 60 seconds while the container initializes"
