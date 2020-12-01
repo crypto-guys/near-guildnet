@@ -12,25 +12,16 @@
     
 ## Instructions
 
-- The install script will create the directories, user account, systemd service, and set the permissions for you.
+- The install script will create the directories, user account, systemd service, and set the permissions for you. Ubuntu should be set up and you should run the script with the user you will be managing the node with.
 
 ```
 mkdir -p /tmp/guildnet && cd /tmp/guildnet
 wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/guildnet-install/nearcore/install/install.sh
-chmod +x install.sh
+sudo chmod +x install.sh 
 sudo ./install.sh
 ```
 
 The installer script has an option to enter the validator name so the validator key is generated correctly
-
-
-#### To Remove leftover data and builder tools from installation
-```
-lxc stop compiler
-lxc delete compiler
-snap remove lxc
-rm -rf /tmp/guildnet
-```
 
 ## Use
 
