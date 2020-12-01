@@ -7,6 +7,13 @@ RELEASE=$(lsb_release -c -s)
 NEAR_VERSION=1.16.2-guildnet
 NEAR_REPO="https://github.com/crypto-guys/nearcore.git"
 vm_name="compiler"
+LXD_CONFIG="wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/main/nearcore/install/lxd-init-preseed.yaml"
+
+
+echo "* Initializing LXD"
+snap install lxd 
+lxd init --preseed $LXD_CONFIG
+
 
 echo "* Launching LXC container to build in"
 lxc launch ubuntu:focal ${vm_name}
