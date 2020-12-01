@@ -16,9 +16,9 @@
 
 ```
 mkdir -p /tmp/guildnet && cd /tmp/guildnet
-wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/1.16.2-guildnet/nearcore/install/installer.sh
-chmod +x installer.sh
-./installer.sh
+wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/guildnet-install/nearcore/install/install.sh
+chmod +x install.sh
+./install.sh
 ```
 
 The installer script has an option to enter the validator name so the validator key is generated correctly
