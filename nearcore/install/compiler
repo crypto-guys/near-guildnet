@@ -1,25 +1,23 @@
 #!/bin/bash
 set -eu
-echo "* Starting the GUILDNET compile process"
+echo "* Starting the GUILDNET build process"
 
 # Script settings 
 RELEASE=$(lsb_release -c -s)
 NEAR_VERSION=1.16.2-guildnet
 NEAR_REPO="https://github.com/crypto-guys/nearcore.git"
 vm_name="compiler"
-LXD_CONFIG="wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/main/nearcore/install/lxd-init-preseed.yaml"
-
 
 echo "* Initializing LXD"
+LXD_CONFIG=lxd-init-preseed.yaml
 snap install lxd 
+wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/main/nearcore/install/lxd-init-preseed.yaml
 lxd init --preseed $LXD_CONFIG
-
 
 echo "* Launching LXC container to build in"
 lxc launch ubuntu:focal ${vm_name}
 echo "* Pausing for 60 seconds while the container initializes"
 sleep 60
-#lxc exec script-test /bin/bash --force-noninteractive
 
 echo "* Install Required Packages"
 lxc exec ${vm_name} -- /usr/bin/apt-get -qq update
@@ -39,15 +37,13 @@ lxc exec ${vm_name} -- sh -c "cd /tmp/src/nearcore && git switch 1.16.2-guildnet
 echo "* Attempting to compile"
 lxc exec ${vm_name} -- sh -c "cd /tmp/src/nearcore && make release"
 
-echo "* Creating tarball for easy retrieval"
+echo "* Creating tarball"
 lxc exec ${vm_name} -- sh -c "mkdir -p /binaries/compressed && cd /tmp/src/nearcore/target/release/ && cp -p genesis-csv-to-json keypair-generator near near-vm-runner-standalone neard state-viewer store-validator /binaries"
 lxc exec ${vm_name} -- sh -c "cd /binaries/compressed && tar -cvf nearcore1.16.2-guildnet.tar -C / binaries"
 
-echo "* The nearcore binaries are now in a tarball in the lxc container at /binaries/compressed/nearcore1.16.2-guildnet.tar"
-LOCATION=$(pwd)
-echo "* Retriving the tarball and storing in $LOCATION$NEAR_VERSION"
-echo $LOCATION$NEAR_VERSION > nearcore_tarfile_path.txt
-lxc file pull ${vm_name}/binaries/compressed/nearcore1.16.2-guildnet.tar nearcore1.16.2-guildnet.tar
-ls /usr/local/src | grep guildnet
+echo "* Retriving the tarball and storing in /src/nearcore-guildnet"
+mkdir /src/nearcore-guildnet
+lxc file pull ${vm_name}/binaries/compressed/nearcore1.16.2-guildnet.tar /src/nearcore-guildnet/nearcore1.16.2-guildnet.tar
+ls /src/nearcore-guildnet/ 
 
 echo "* The build was successful"
