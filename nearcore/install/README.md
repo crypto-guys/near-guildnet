@@ -4,7 +4,7 @@
 - Sets up the machine to run the binaries using systemd 
 - Configures a new guildnet validator with config, genesis, and keys
 - Options for logging
-- TODO: Removes everything installed for the compile process
+- Removes everything installed for the compile process
 
 ## Requirements
 
