@@ -5,17 +5,14 @@ echo "* Guildnet Install Script Starting"
 echo " What is your validator accountId?"
 read VALIDATOR_ID
 
+
 # Script settings
 CONFIG_URL="https://s3.us-east-2.amazonaws.com/build.openshards.io/nearcore-deploy/guildnet/config.json"
-TARBALL=$(cat nearcore_tarfile_path.txt)
+TARBALL=$(nearcore-guildnet.tar)
 
 echo "* Setting up required accounts, groups, and privilages"
-adduser --system --disabled-login --disabled-password --ingroup syslog --no-create-home neard-guildnet
 groupadd near
-usermod -aG syslog neard-guildnet
-usermod -aG near neard-guildnet
-adduser -U -G adm -s /bin/bash -m $USER_ID
-usermod -aG sudo $USER_ID && usermod -aG near $USER_ID
+adduser --system --disabled-login --disabled-password --ingroup near --no-create-home neard-guildnet
 
 # Set env variable is not really required unless you use the near-cli on same machine
 # export NODE_ENV=guildnet
