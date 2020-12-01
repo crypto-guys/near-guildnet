@@ -134,5 +134,5 @@ sudo ln -s /lib/systemd/system/near-guildnet-validator.service /etc/systemd/syst
 echo '* The installation has completed removing the installer'
 lxc stop compiler
 lxc delete compiler
-sudo snap remove lxc
+sudo snap remove --purge lxc
 rm -rf /tmp/guildnet
