@@ -78,9 +78,9 @@ mkdir -p nearcore-guildnet
 lxc file pull ${vm_name}/binaries/compressed/nearcore1.16.2-guildnet.tar nearcore-guildnet/nearcore-guildnet.tar
 ls nearcore-guildnet/
 
-echo "* Guildnet Install Script Starting"
+echo "* Guildnet Validator Install Starting"
 
-echo " What is your validator accountId?"
+echo " To set up your validator enter the validator accountId... or hit cntl+c to stop"
 read VALIDATOR_ID
 
 # Script settings
