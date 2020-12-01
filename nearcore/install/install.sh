@@ -118,18 +118,21 @@ After=network-online.target
 
 [Service]
 Type=exec
-User=near-validator
+User=neard-guildnet
 Group=near
-ExecStart=neard --home /var/lib/near/validator/home run
+ExecStart=neard --home /var/lib/near/guildnet/ run
 Restart=on-failure
 RestartSec=45
 #StandardOutput=append:/var/log/guildnet.log
 
 [Install]
 WantedBy=multi-user.target
+
 EOF
 
-sudo ln -s /lib/systemd/system/near-guildnet-validator.service /etc/systemd/system/multi-user.target.wants/near-guildnet-validator.service
+sudo ln -s /var/lib/systemd/neard-guildnet.service /etc/systemd/system
+#sudo systemctl enable neard-guildnet.service
+#sudo systemctl status neard-guildnet.service
 
 echo '* The installation has completed removing the installer'
 lxc stop compiler
