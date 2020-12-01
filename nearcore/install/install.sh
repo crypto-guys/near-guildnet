@@ -7,49 +7,19 @@ RELEASE=$(lsb_release -c -s)
 NEAR_VERSION=1.16.2-guildnet
 NEAR_REPO="https://github.com/crypto-guys/nearcore.git"
 vm_name="compiler"
-
-echo "* Initializing LXD"
+sudo usermod -aG lxd $USER
+# echo "* Initializing LXD"
+    cat <<EOF | sudo lxd init --preseed
+CONFIG=$(cat lxd-init-preseed.yaml)
 sudo snap install lxd 
 sudo usermod -aG lxd $USER
-
-    cat <<EOF | sudo lxd init --preseed
-config:
-  images.auto_update_interval: 15
-storage_pools:
-- config:
-    size: 20GB
-  description: ""
-  name: default
-  driver: zfs
-networks:
-- name: lxdbr0
-  type: bridge
-  config:
-    ipv4.address: auto
-    ipv6.address: none
-profiles:
-- config: {}
-  description: ""
-  devices:
-    eth0:
-      name: eth0
-      network: lxdbr0
-      type: nic
-    root:
-      path: /
-      pool: default
-      type: disk
-  name: default
-cluster: null
-EOF
-
-sudo snap restart lxd
-sleep 2
+wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/main/nearcore/install/lxd-init-preseed.yaml
+sudo lxd init --preseed $LXD_CONFIG
 
 echo "* Launching LXC container to build in"
 lxc launch ubuntu:focal ${vm_name}
-echo "* Pausing for while the container initializes"
-sleep 45
+echo "* Pausing for 60 seconds while the container initializes"
+sleep 60
 
 echo "* Install Required Packages"
 lxc exec ${vm_name} -- /usr/bin/apt-get -qq update
@@ -78,14 +48,14 @@ mkdir -p nearcore-guildnet
 lxc file pull ${vm_name}/binaries/compressed/nearcore1.16.2-guildnet.tar nearcore-guildnet/nearcore-guildnet.tar
 ls nearcore-guildnet/
 
-echo "* Guildnet Validator Install Starting"
+echo "* Guildnet Install Script Starting"
 
-echo " To set up your validator enter the validator accountId... or hit cntl+c to stop"
+echo " What is your validator accountId?"
 read VALIDATOR_ID
 
 # Script settings
 CONFIG_URL="https://s3.us-east-2.amazonaws.com/build.openshards.io/nearcore-deploy/guildnet/config.json"
-TARBALL=$(nearcore-guildnet.tar)
+TARBALL="nearcore-guildnet/nearcore-guildnet.tar"
 
 echo "* Setting up required accounts, groups, and privilages"
 sudo groupadd near
@@ -103,12 +73,13 @@ rm -rf compressed/
 sudo cp * /usr/local/bin
 
 echo '* Getting the correct files and fixing permissions'
-neard --home /var/lib/near/guildnet/ --download-genesis --chain-id guildnet --account-id $VALIDATOR_ID
-wget $CONFIG_URL -O /var/lib/near/guildnet/config.json
+sudo neard --home /var/lib/near/guildnet/ init --download-genesis --chain-id guildnet --account-id $VALIDATOR_ID
+sudo wget $CONFIG_URL -O /var/lib/near/guildnet/config.json
 sudo chown -R neard-guildnet:near -R /var/lib/near
 
 echo "* Creating systemd unit file for NEAR validator service"
-sudo cat > /lib/systemd/system/neard-guildnet.service <<EOF
+
+sudo cat > /var/lib/systemd/neard-guildnet.service <<EOF
 [Unit]
 Description=NEAR GUILDNET Validator Service
 Documentation=https://github.com/nearprotocol/nearcore
