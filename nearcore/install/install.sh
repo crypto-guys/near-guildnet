@@ -7,8 +7,9 @@ RELEASE=$(lsb_release -c -s)
 NEAR_VERSION=1.16.2-guildnet
 NEAR_REPO="https://github.com/crypto-guys/nearcore.git"
 vm_name="compiler"
-sudo usermod -aG lxd $USER
+
 sudo snap install lxd
+sudo usermod -aG lxd $USER
 
 # echo "* Initializing LXD"
     cat <<EOF | sudo lxd init --preseed
@@ -44,6 +45,7 @@ EOF
 
 sudo snap restart lxd
 sleep 2
+
 echo "* Launching LXC container to build in"
 lxc launch ubuntu:focal ${vm_name}
 echo "* Pausing for 60 seconds while the container initializes"
