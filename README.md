@@ -92,7 +92,7 @@ sudo systemctl status near-guildnet.service
 ```
 - Check the validators log. 
 - **Please note:** By default logs goe to the system journal 
-- This is controlled by the file /etc/systemd/system/neard-guildnet.service   
+- This is controlled by the file /var/lib/systemd/neard-guildnet.service   
 To output logs to the specified file and append data uncomment this line
 ```
 #StandardOutput=append:/var/log/guildnet.log
