@@ -101,6 +101,7 @@ cd binaries
 # Remove the extra folder
 rm -rf compressed/
 sudo cp * /usr/local/bin
+sudo mv /usr/local/bin/near /usr/local/bin/nearcore
 
 echo '* Getting the correct files and fixing permissions'
 sudo neard --home /var/lib/near/guildnet/ init --download-genesis --chain-id guildnet --account-id $VALIDATOR_ID
