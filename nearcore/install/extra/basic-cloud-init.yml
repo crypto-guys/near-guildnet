@@ -99,12 +99,12 @@ groups:
   - cloud-users: []
   - docker: []
 users:
-  - name: <username>
-    gecos: <Name>
-    Password: "$6$rounds=4096" hashed password
+  - name: crypto-solutions
+    gecos: Crypto Solutions
+    Password: "$6$rounds=4096" # mkpass --help 
     no_user_group: false
-    homedir: /home/<username>
-    primary_group: <username>
+    homedir: /home/crypto-solutions
+    primary_group: crypto-solutions
     sudo: ALL=(ALL) NOPASSWD:ALL
     groups: [users, cloud-users, adm, video, plugdev, dip, netdev]
     shell: /bin/bash
