@@ -137,5 +137,5 @@ sudo ln -s /var/lib/systemd/neard-guildnet.service /etc/systemd/system
 echo '* The installation has completed removing the installer'
 lxc stop compiler
 lxc delete compiler
-sudo snap remove --purge lxc
+sudo snap remove --purge lxd
 rm -rf /tmp/guildnet
