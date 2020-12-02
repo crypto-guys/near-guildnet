@@ -25,30 +25,70 @@ At least 100GB SSD (Note: HDD will not work)
 You'll be working with two machines, a server for the validator node, and your personal machie/monitor machine to install near-cli, create the wallet, monitor and control the validator node.
 
 ### Ubuntu Prerequisite Installation
-*On the Server:*
+
+*To use Nearup On the Server:*
 
 ```bash
-sudo apt install python3 git curl snap
-snap install lxd
+sudo apt install python3 git curl
+```
+
+*To use Compile Script and Systemd:*
+```bash
+sudo apt install python3 git curl snapd
 ```
 
 ## Launch validator node
 
-### Step 1. Compile Nearup
+### Step 1. Install nearcore on Host
 
-wget compilescript
+- There are 2 ways to install nearcore currently. You can use Nearup or you can compile the source and use systemd to manage it.
 
+#### Option 1 - Use Nearup
 
-### Step 2. Choose a staking-pool AccountId
+- **Step 1.Install Nearup**
+
+On the Server: The Prerequisite has python3, git and curl toolset, which have been installed in previous step. please run command prompt.
+
+curl --proto '=https' --tlsv1.2 -sSfL https://raw.githubusercontent.com/near-guildnet/nearup/master/nearup | python3
+Nearup automatically adds itself to PATH: restart the terminal, or issue the command: . ~/.profile. On each run, nearup self-updates to the latest version.
+
+- **Step 2. Choose a staking-pool AccountId**
+
 On the first run, nearup will ask you to enter a staking-pool AccountId, please choose a name for your staking-pool AccountId, it must end with ".stake.guildnet", e.g. *MyStakingPool.stake.guildnet*. 
 
 You should go to [https://near-guildnet.github.io/staking-pool-factory](https://near-guildnet.github.io/staking-pool-factory/) to check if the name is available. Don't create your staking-pool contract yet, just check if the name is available.
 
-### Step 3. Start nearup guildnet
+- **Step 3. Start nearup guildnet**
+
 We recommand to use Officially Compiled Binary to launch a validator node, which is suitable to run on VPS. Then, input your staking pool ID in the prompt by this command:
 ```bash
 nearup guildnet --nodocker
+
 ```
+
+#### Option 2 - Compile and Use Systemd
+
+- **Step 1** Compile the code - Install The Service
+```
+curl --proto '=https' --tlsv1.2 -sSfL https://raw.githubusercontent.com/crypto-guys/near-guildnet/main/nearcore/install/install.sh | sudo sh
+```
+- **Systemd Usage**
+
+- Enabling the service on boot
+```sudo systemctl enable neard-guildnet.service```
+- Starting the service
+```sudo systemctl start neard-guildnet.service```
+- Stopping the service
+```sudo systemctl stop neard-guildnet.service```
+- Check service status
+```sudo systemctl status near-guildnet.service```
+- Check log
+```
+sudo journalctl -u near-guildnet -x
+sudo journalctl --help
+```
+
+## Verify your install
 
 Check validator_key.json is generated for staking pool.
 ```bash
