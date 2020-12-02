@@ -115,27 +115,6 @@ _Tip: You may request 75,000 faucet from Near team for staking test._
 
 [GuildNet Faucet](https://near-guildnet.github.io/open-shards-faucet/)
 
-#### Install Node Version 12.x and npm
-Nodes.js and npm can be install by
-```bash
-sudo apt install nodejs
-sudo apt install npm
-sudo npm install -g n
-sudo n stable
-PATH="$PATH"
-```
-
-#### Check Node.js and npm version  
-```bash
-node -v
-v12.18.3
-npm -v
-6.14.6
-```
-
-##### Alternative
-If "n" is not working for you to upgrade node (node -v doesn't change) you can try [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md) to manage node versions
-
 ## Install Near-Cli
 *On your personal machine:*
 NEAR CLI is a Node.js application that relies on near-api-js to generate secure keys, connect to the NEAR platform and send transactions to the network on your behalf.  
@@ -143,11 +122,28 @@ _note that Node.js version 10+ is required to run NEAR CLI_
 
 **Note: You don't need to install Near-Cli on the server. We reccomend to install near-cli on your personal machine or a separate machine for increased security and performance. However it still can be installed on the same machine.**
 
+#### Install Node Version 15.x and npm
+Nodes.js and npm can be install by
+```bash
+curl -sL https://deb.nodesource.com/setup_15.x | sudo -E bash -
+sudo apt install build-essential nodejs
+PATH="$PATH"
+```
+
+#### Check Node.js and npm version  
+```bash
+node -v
+    v15.3.0
+npm -v
+    7.0.14
+
+```
 
 ### Install the guild's near-cli
 ```bash
-git clone https://github.com/near-guildnet/near-cli.git
-cd near-cli
+git clone https://github.com/crypto-guys/near-cli.git 
+cd near-cli/
+npm install
 sudo npm install -g
 ```
 ## Setting up your environment
