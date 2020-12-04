@@ -8,7 +8,9 @@ NEAR_VERSION=1.16.2-guildnet
 NEAR_REPO="https://github.com/crypto-guys/nearcore.git"
 vm_name="compiler"
 
-sudo snap install lxd
+sudo apt-get -qq update && sudo apt-get -qq upgrade
+sudo apt-get install -qq snapd
+sudo snap install lxd 
 sudo usermod -aG lxd $USER
 
 # echo "* Initializing LXD"
@@ -44,11 +46,11 @@ cluster: null
 EOF
 
 sudo snap restart lxd
-sleep 2
+sleep 10
 
 echo "* Launching LXC container to build in"
 lxc launch ubuntu:focal ${vm_name}
-echo "* Pausing for 60 seconds while the container initializes"
+echo "* Pausing for 90 seconds while the container initializes"
 sleep 90
 
 echo "* Install Required Packages"
@@ -132,7 +134,7 @@ WantedBy=multi-user.target
 EOF
 
 sudo ln -s /var/lib/systemd/neard-guildnet.service /etc/systemd/system
-#sudo systemctl enable neard-guildnet.service
+sudo systemctl enable neard-guildnet.service
 #sudo systemctl status neard-guildnet.service
 
 echo '* The installation has completed removing the installer'
@@ -140,3 +142,5 @@ lxc stop compiler
 lxc delete compiler
 sudo snap remove --purge lxd
 rm -rf /tmp/guildnet
+
+ehco '* You should now verify your validator key is correct"
