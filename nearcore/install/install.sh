@@ -9,7 +9,7 @@ NEAR_REPO="https://github.com/crypto-guys/nearcore.git"
 vm_name="compiler"
 
 sudo apt-get -qq update && sudo apt-get -qq upgrade
-sudo apt-get install -qq snapd
+sudo apt-get install -qq snapd squashfs-tools git curl python3
 sudo snap install lxd 
 sudo usermod -aG lxd $USER
 
@@ -49,7 +49,7 @@ sudo snap restart lxd
 sleep 10
 
 echo "* Launching LXC container to build in"
-lxc launch ubuntu:focal ${vm_name}
+lxc launch ubuntu:$RELEASE ${vm_name}
 echo "* Pausing for 90 seconds while the container initializes"
 sleep 90
 
@@ -61,23 +61,22 @@ lxc exec ${vm_name} -- /usr/bin/apt-get -qq autoclean
 lxc exec ${vm_name} -- /usr/bin/apt-get -qq install git curl libclang-dev build-essential iperf llvm runc gcc g++ g++-multilib make cmake clang pkg-config libssl-dev libudev-dev libx32stdc++6-7-dbg lib32stdc++6-7-dbg python3-dev
 lxc exec ${vm_name} -- /usr/bin/snap install rustup --classic
 lxc exec ${vm_name} -- /snap/bin/rustup default nightly
-# lxc exec ${vm_name} -- /snap/bin/rustup component add clippy-preview
 lxc exec ${vm_name} -- /snap/bin/rustup update
 
 echo "* Cloning the github source"
 lxc exec ${vm_name} -- sh -c "rm -rf /tmp/src && mkdir -p /tmp/src/ && git clone $NEAR_REPO /tmp/src/nearcore"
 echo "* Switching Version"
-lxc exec ${vm_name} -- sh -c "cd /tmp/src/nearcore && git switch 1.16.2-guildnet"
+lxc exec ${vm_name} -- sh -c "cd /tmp/src/nearcore && git checkout 1.16.2-guildnet"
 echo "* Attempting to compile"
 lxc exec ${vm_name} -- sh -c "cd /tmp/src/nearcore && make release"
 
 echo "* Creating tarball"
-lxc exec ${vm_name} -- sh -c "mkdir -p /binaries/compressed && cd /tmp/src/nearcore/target/release/ && cp -p genesis-csv-to-json keypair-generator near near-vm-runner-standalone neard state-viewer store-validator /binaries"
-lxc exec ${vm_name} -- sh -c "cd /binaries/compressed && tar -cvf nearcore1.16.2-guildnet.tar -C / binaries"
+lxc exec ${vm_name} -- sh -c "mkdir -p /src/binaries/ && cd /tmp/src/nearcore/target/release/ && cp -p genesis-csv-to-json keypair-generator near near-vm-runner-standalone neard state-viewer store-validator /src/binaries"
+lxc exec ${vm_name} -- sh -c "cd / && tar -cvf nearcore1.16.2-guildnet.tar -C /src/ binaries"
 
 echo "* Retriving the tarball and storing in /src/nearcore-guildnet"
 mkdir -p nearcore-guildnet
-lxc file pull ${vm_name}/binaries/compressed/nearcore1.16.2-guildnet.tar nearcore-guildnet/nearcore-guildnet.tar
+lxc file pull ${vm_name}/tmp/binaries/nearcore1.16.2-guildnet.tar nearcore-guildnet/nearcore-guildnet.tar
 ls nearcore-guildnet/
 
 echo "* Guildnet Install Script Starting"
@@ -100,10 +99,9 @@ sudo adduser --system --disabled-login --disabled-password --ingroup near --no-c
 sudo mkdir -p /var/lib/near/guildnet
 tar -xf $TARBALL
 cd binaries
-# Remove the extra folder
-rm -rf compressed/
-sudo cp * /usr/local/bin
 sudo mv /usr/local/bin/near /usr/local/bin/nearcore
+sudo cp * /usr/local/bin
+
 
 echo '* Getting the correct files and fixing permissions'
 sudo neard --home /var/lib/near/guildnet/ init --download-genesis --chain-id guildnet --account-id $VALIDATOR_ID
@@ -125,17 +123,16 @@ User=neard-guildnet
 Group=near
 ExecStart=neard --home /var/lib/near/guildnet/ run
 Restart=on-failure
-RestartSec=45
+RestartSec=80
 #StandardOutput=append:/var/log/guildnet.log
 
 [Install]
 WantedBy=multi-user.target
-
 EOF
 
-sudo ln -s /var/lib/systemd/neard-guildnet.service /etc/systemd/system
-sudo systemctl enable neard-guildnet.service
-#sudo systemctl status neard-guildnet.service
+#udo ln -s /var/lib/systemd/neard-guildnet.service /etc/systemd/system
+#udo systemctl enable neard-guildnet.service
+sudo systemctl status neard-guildnet.service
 
 echo '* The installation has completed removing the installer'
 lxc stop compiler
