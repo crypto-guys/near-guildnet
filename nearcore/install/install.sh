@@ -49,7 +49,7 @@ sleep 2
 echo "* Launching LXC container to build in"
 lxc launch ubuntu:focal ${vm_name}
 echo "* Pausing for 60 seconds while the container initializes"
-sleep 60
+sleep 90
 
 echo "* Install Required Packages"
 lxc exec ${vm_name} -- /usr/bin/apt-get -qq update
