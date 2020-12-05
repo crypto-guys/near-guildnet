@@ -9,7 +9,7 @@ NEAR_REPO="https://github.com/crypto-guys/nearcore.git"
 vm_name="compiler"
 
 sudo apt-get -qq update && sudo apt-get -qq upgrade
-sudo apt-get install -qq snapd squashfs-tools git curl python3
+sudo apt-get -qq install snapd squashfs-tools git curl python3
 sudo snap install lxd 
 sudo usermod -aG lxd $USER
 
