@@ -166,7 +166,6 @@ EOF
 
 echo '* Service Status 'sudo systemctl status neard.service' *'
 sudo systemctl enable neard.service
-sudo systemctl status neard.service
 
 echo '* The installation has completed removing the installer'
 lxc stop compiler
