@@ -15,7 +15,9 @@
 - The install script will create the directories, user account, systemd service, and set the permissions for you. Ubuntu should be set up and you should run the script with the user you will be managing the node with.
 
 ```
-curl --proto '=https' --tlsv1.2 -sSfL https://raw.githubusercontent.com/crypto-guys/near-guildnet/main/nearcore/install/install.sh | sudo sh
+wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/main/nearcore/install/install.sh
+chmod +x install.sh
+./install.sh
 ```
 
 The installer script has an option to enter the validator name so the validator key is generated correctly
