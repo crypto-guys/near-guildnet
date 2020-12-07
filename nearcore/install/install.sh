@@ -19,7 +19,7 @@ sudo snap install lxd
 
 echo '* Pause 30 seconds'
 sleep 30
-sudo usermod -aG lxd $NAME
+# sudo usermod -aG lxd $NAME
 
 echo "* Initializing LXD"
     cat <<EOF | sudo lxd init --preseed
