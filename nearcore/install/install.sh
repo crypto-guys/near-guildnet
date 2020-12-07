@@ -8,7 +8,7 @@ vm_name="compiler"
 
 echo "* Starting the GUILDNET build process"
 
-function update_via_apt() 
+function update_via_apt
 {
     echo "* Updating via APT and installing required packages"
     apt-get -qq update && apt-get -qq upgrade
@@ -21,7 +21,7 @@ function update_via_apt()
 
 # sudo usermod -aG lxd $NAME
 
-function init_lxd() 
+function init_lxd
 {
 echo "* Initializing LXD"
     cat <<EOF | lxd init --preseed
@@ -61,7 +61,7 @@ systemctl restart snapd
 sleep 15
 }
 
-function launch_container() 
+function launch_container 
 {
     echo "* Detected Ubuntu $RELEASE"
     echo "* Launching Ubuntu $RELEASE LXC container to build in"
@@ -79,7 +79,7 @@ function launch_container()
     lxc exec ${vm_name} -- /snap/bin/rustup update
 }
 
-function compile_source() 
+function compile_source
 {
     echo "* Cloning the github source"
     lxc exec ${vm_name} -- sh -c "rm -rf /tmp/src && mkdir -p /tmp/src/ && git clone ${NEAR_REPO} /tmp/src/nearcore"
@@ -93,7 +93,7 @@ function compile_source()
     lxc exec ${vm_name} -- sh -c "cd /tmp && tar -cf nearcore.tar -C ~/ binaries/"
 }
 
-function get_tarball() 
+function get_tarball
 {
     echo "* Retriving the tarball and storing in /tmp/near/nearcore.tar"
     mkdir -p /usr/lib/near/guildnet
