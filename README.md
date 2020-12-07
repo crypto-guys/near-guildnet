@@ -84,7 +84,7 @@ sudo systemctl disable neard.service
 ```
 sudo systemctl start neard.service
 
-sudo systemctl stop neard-guildnetservice
+sudo systemctl stop neard.service
 
 sudo systemctl status neard.service
 ```
@@ -99,7 +99,7 @@ To output logs to the specified file and append data uncomment this line from /u
 
 - Check the logs
 ```
-sudo journalctl -u near-guildnet -x
+sudo journalctl -u neard -x
 sudo journalctl --help
 ```
 
