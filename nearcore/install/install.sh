@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eu
 # Script settings 
-RELEASE=$(lsb_release -c -s)
+RELEASE=bionic
 NEAR_VERSION=1.16.2-guildnet
 NEAR_REPO="https://github.com/crypto-guys/nearcore.git"
 vm_name="compiler"
@@ -54,7 +54,6 @@ profiles:
       type: disk
   name: default
 cluster: null
-
 EOF
 
 systemctl restart snapd
@@ -104,18 +103,15 @@ function get_tarball
 
 if [ $USER != "root" ]
 then
-sudo update_via_apt
-sudo init_lxd
-sudo launch_container
-sudo compile_source
-sudo get_tarball
-else
+echo " Run sudo su before starting the script please"
+exit
+fi
 update_via_apt
 init_lxd
 launch_container
 compile_source
 get_tarball
-fi
+
 
 echo "* Guildnet Install Script Starting"
 
@@ -152,7 +148,6 @@ Description=NEAR GUILDNET Validator Service
 Documentation=https://github.com/nearprotocol/nearcore
 Wants=network-online.target
 After=network-online.target
-
 [Service]
 Type=exec
 User=neard-guildnet
@@ -161,7 +156,6 @@ ExecStart=neard --home /usr/lib/near/guildnet/ run
 Restart=on-failure
 RestartSec=80
 #StandardOutput=append:/var/log/guildnet.log
-
 [Install]
 WantedBy=multi-user.target
 EOF
@@ -178,9 +172,7 @@ sudo cat > /usr/lib/systemd/journald.conf.d/neard.conf <<EOF
 # Defaults can be restored by simply deleting this file.
 #
 # See journald.conf(5) for details.
-
 [Journal]
-
 Storage=auto
 ForwardToSyslog=no
 Compress=yes
@@ -189,7 +181,6 @@ Compress=yes
 SyncIntervalSec=1m
 RateLimitInterval=30s
 #RateLimitBurst=1000
-
 EOF
 
 echo '* Service Status 'sudo systemctl status neard.service' *'
