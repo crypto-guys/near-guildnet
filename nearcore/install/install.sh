@@ -8,7 +8,6 @@ vm_name="compiler"
 
 echo "* Starting the GUILDNET build process"
 
-echo " What is your validator accountId?"
 VALIDATOR_ID=$(read -t 20 -p "What is your validator accountId?")
 
 function update_via_apt
