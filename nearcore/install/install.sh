@@ -8,6 +8,9 @@ vm_name="compiler"
 
 echo "* Starting the GUILDNET build process"
 
+echo " What is your validator accountId?"
+read VALIDATOR_ID
+
 function update_via_apt
 {
     echo "* Updating via APT and installing required packages"
@@ -114,9 +117,6 @@ get_tarball
 
 
 echo "* Guildnet Install Script Starting"
-
-echo " What is your validator accountId?"
-read VALIDATOR_ID
 
 # Script settings
 CONFIG_URL="https://s3.us-east-2.amazonaws.com/build.openshards.io/nearcore-deploy/guildnet/config.json"
