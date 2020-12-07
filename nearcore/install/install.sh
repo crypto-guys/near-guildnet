@@ -1,60 +1,66 @@
 #!/bin/bash
 set -eu
-echo "* Starting the GUILDNET build process"
-
 # Script settings 
 RELEASE=$(lsb_release -c -s)
 NEAR_VERSION=1.16.2-guildnet
 NEAR_REPO="https://github.com/crypto-guys/nearcore.git"
 vm_name="compiler"
 
+echo "* Starting the GUILDNET build process"
 
-echo "* Updating via APT and installing required packages"
-sudo apt-get -qq update && sudo apt-get -qq upgrade
-sudo apt-get -qq install snapd squashfs-tools git curl python3
-sleep 5
+if [ $USER == "root" ]
+then
 
-echo '* Install lxd using snap'
-sudo snap install lxd
+
+function update_via_apt () 
+{
+    echo "* Updating via APT and installing required packages"
+    apt-get -qq update && apt-get -qq upgrade
+    apt-get -qq install snapd squashfs-tools git curl python3
+    sleep 5
+    echo '* Install lxd using snap'
+    snap install lxd
+}
 
 echo '* Pause 30 seconds'
 sleep 30
 # sudo usermod -aG lxd $NAME
 
 echo "* Initializing LXD"
-    cat <<EOF | sudo lxd init --preseed
+    cat <<EOF | lxd init --preseed
 config: {}
 networks:
-- name: lxdbr0
-  type: bridge
-  config:
+- config:
     ipv4.address: auto
-    ipv6.address: none
+    ipv6.address: auto
+  description: ""
+  name: lxdbr1
+  type: ""
+  project: default
 storage_pools:
 - config:
     size: 20GB
   description: ""
-  name: default
-  driver: zfs
+  name: guildnet
+  driver: btrfs
 profiles:
 - config: {}
   description: ""
   devices:
     eth0:
       name: eth0
-      nictype: bridged
-      parent: lxdbr0
+      network: lxdbr1
       type: nic
     root:
       path: /
-      pool: default
+      pool: guildnet
       type: disk
   name: default
 cluster: null
 
 EOF
 
-sudo systemctl restart snapd
+systemctl restart snapd
 sleep 15
 
 echo "* Detected Ubuntu $RELEASE"
@@ -84,10 +90,10 @@ lxc exec ${vm_name} -- sh -c "cd /tmp/src/nearcore/target/release/ && cp genesis
 lxc exec ${vm_name} -- sh -c "cd /tmp/src/nearcore/target/release/ && cp near ~/binaries/nearcore"
 lxc exec ${vm_name} -- sh -c "cd /tmp && tar -cf nearcore.tar -C ~/ binaries/"
 
-echo "* Retriving the tarball and storing in ~/nearcore.tar"
-sudo mkdir -p /usr/lib/near/guildnet
-sudo mkdir -p /tmp/near
-sudo lxc file pull ${vm_name}/tmp/nearcore.tar /tmp/near/nearcore.tar
+echo "* Retriving the tarball and storing in /tmp/near/nearcore.tar"
+mkdir -p /usr/lib/near/guildnet
+mkdir -p /tmp/near
+lxc file pull ${vm_name}/tmp/nearcore.tar /tmp/near/nearcore.tar
 
 echo "* Guildnet Install Script Starting"
 
