@@ -107,12 +107,12 @@ function get_tarball ()
 if [ $USER != "root" ]
 then
 sudo su
+fi
 update_via_apt
 init_lxd
 launch_container
 compile_source
 get_tarball
-fi
 
 echo "* Guildnet Install Script Starting"
 
