@@ -8,7 +8,7 @@
 
 ## Requirements
 
-- Ubuntu 20.04 
+- Ubuntu (**20.04 focal** or **18.04 bionic**)
     
 ## Instructions
 
