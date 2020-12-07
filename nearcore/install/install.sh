@@ -104,14 +104,8 @@ function get_tarball ()
 }
 
 
-if [ $USER == "root" ]
+if [ $USER != "root" ]
 then
-update_via_apt
-init_lxd
-launch_container
-compile_source
-get_tarball
-else
 sudo su
 update_via_apt
 init_lxd
