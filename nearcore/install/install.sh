@@ -23,30 +23,31 @@ sleep 30
 
 echo "* Initializing LXD"
     cat <<EOF | sudo lxd init --preseed
-config: []
-storage_pools:
-- config:
-    size: 20GB
-  description: ""
-  name: default
-  driver: zfs
+config: {}
 networks:
 - name: lxdbr0
   type: bridge
   config:
     ipv4.address: auto
     ipv6.address: none
+storage_pools:
+- config:
+    size: 20GB
+  description: ""
+  name: default
+  driver: zfs
 profiles:
 - config: {}
   description: ""
   devices:
     eth0:
       name: eth0
-      network: lxdbr0
+      nictype: bridged
+      parent: lxdbr0
       type: nic
     root:
       path: /
-      pool: default
+      pool: defaul1
       type: disk
   name: default
 cluster: null
