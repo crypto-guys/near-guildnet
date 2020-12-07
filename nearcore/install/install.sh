@@ -8,10 +8,6 @@ vm_name="compiler"
 
 echo "* Starting the GUILDNET build process"
 
-if [ $USER == "root" ]
-then
-
-
 function update_via_apt () 
 {
     echo "* Updating via APT and installing required packages"
@@ -20,12 +16,13 @@ function update_via_apt ()
     sleep 5
     echo '* Install lxd using snap'
     snap install lxd
+
 }
 
-echo '* Pause 30 seconds'
-sleep 30
 # sudo usermod -aG lxd $NAME
 
+function init_lxd () 
+{
 echo "* Initializing LXD"
     cat <<EOF | lxd init --preseed
 config: {}
@@ -62,38 +59,58 @@ EOF
 
 systemctl restart snapd
 sleep 15
+}
 
-echo "* Detected Ubuntu $RELEASE"
-echo "* Launching Ubuntu $RELEASE LXC container to build in"
-lxc launch ubuntu:${RELEASE} ${vm_name}
-echo "* Pausing for 90 seconds while the container initializes"
-sleep 90
+function launch_container () 
+{
+    echo "* Detected Ubuntu $RELEASE"
+    echo "* Launching Ubuntu $RELEASE LXC container to build in"
+    lxc launch ubuntu:${RELEASE} ${vm_name}
+    echo "* Pausing for 90 seconds while the container initializes"
+    sleep 90
+    echo "* Install Required Packages"
+    lxc exec ${vm_name} -- /usr/bin/apt-get -qq update
+    lxc exec ${vm_name} -- /usr/bin/apt-get -qq upgrade
+    lxc exec ${vm_name} -- /usr/bin/apt-get -qq autoremove
+    lxc exec ${vm_name} -- /usr/bin/apt-get -qq autoclean
+    lxc exec ${vm_name} -- /usr/bin/apt-get -qq install git curl libclang-dev build-essential iperf llvm runc gcc g++ g++-multilib make cmake clang pkg-config libssl-dev libudev-dev libx32stdc++6-7-dbg lib32stdc++6-7-dbg python3-dev
+    lxc exec ${vm_name} -- /usr/bin/snap install rustup --classic
+    lxc exec ${vm_name} -- /snap/bin/rustup default nightly
+    lxc exec ${vm_name} -- /snap/bin/rustup update
+}
 
-echo "* Install Required Packages"
-lxc exec ${vm_name} -- /usr/bin/apt-get -qq update
-lxc exec ${vm_name} -- /usr/bin/apt-get -qq upgrade
-lxc exec ${vm_name} -- /usr/bin/apt-get -qq autoremove
-lxc exec ${vm_name} -- /usr/bin/apt-get -qq autoclean
-lxc exec ${vm_name} -- /usr/bin/apt-get -qq install git curl libclang-dev build-essential iperf llvm runc gcc g++ g++-multilib make cmake clang pkg-config libssl-dev libudev-dev libx32stdc++6-7-dbg lib32stdc++6-7-dbg python3-dev
-lxc exec ${vm_name} -- /usr/bin/snap install rustup --classic
-lxc exec ${vm_name} -- /snap/bin/rustup default nightly
-lxc exec ${vm_name} -- /snap/bin/rustup update
+function compile_source () 
+{
+    echo "* Cloning the github source"
+    lxc exec ${vm_name} -- sh -c "rm -rf /tmp/src && mkdir -p /tmp/src/ && git clone ${NEAR_REPO} /tmp/src/nearcore"
+    echo "* Switching Version"
+    lxc exec ${vm_name} -- sh -c "cd /tmp/src/nearcore && git checkout 1.16.2-guildnet"
+    echo "* Attempting to compile"
+    lxc exec ${vm_name} -- sh -c "cd /tmp/src/nearcore && make release"
+    lxc exec ${vm_name} -- sh -c "mkdir ~/binaries"
+    lxc exec ${vm_name} -- sh -c "cd /tmp/src/nearcore/target/release/ && cp genesis-csv-to-json keypair-generator near-vm-runner-standalone neard state-viewer store-validator ~/binaries"
+    lxc exec ${vm_name} -- sh -c "cd /tmp/src/nearcore/target/release/ && cp near ~/binaries/nearcore"
+    lxc exec ${vm_name} -- sh -c "cd /tmp && tar -cf nearcore.tar -C ~/ binaries/"
+}
 
-echo "* Cloning the github source"
-lxc exec ${vm_name} -- sh -c "rm -rf /tmp/src && mkdir -p /tmp/src/ && git clone ${NEAR_REPO} /tmp/src/nearcore"
-echo "* Switching Version"
-lxc exec ${vm_name} -- sh -c "cd /tmp/src/nearcore && git checkout 1.16.2-guildnet"
-echo "* Attempting to compile"
-lxc exec ${vm_name} -- sh -c "cd /tmp/src/nearcore && make release"
-lxc exec ${vm_name} -- sh -c "mkdir ~/binaries"
-lxc exec ${vm_name} -- sh -c "cd /tmp/src/nearcore/target/release/ && cp genesis-csv-to-json keypair-generator near-vm-runner-standalone neard state-viewer store-validator ~/binaries"
-lxc exec ${vm_name} -- sh -c "cd /tmp/src/nearcore/target/release/ && cp near ~/binaries/nearcore"
-lxc exec ${vm_name} -- sh -c "cd /tmp && tar -cf nearcore.tar -C ~/ binaries/"
+function get_tarball () 
+{
+    echo "* Retriving the tarball and storing in /tmp/near/nearcore.tar"
+    mkdir -p /usr/lib/near/guildnet
+    mkdir -p /tmp/near
+    lxc file pull ${vm_name}/tmp/nearcore.tar /tmp/near/nearcore.tar
+}
 
-echo "* Retriving the tarball and storing in /tmp/near/nearcore.tar"
-mkdir -p /usr/lib/near/guildnet
-mkdir -p /tmp/near
-lxc file pull ${vm_name}/tmp/nearcore.tar /tmp/near/nearcore.tar
+
+if [ $USER != "root" ]
+then
+sudo su
+fi
+update_via_apt
+init_lxd
+launch_container
+compile_source
+get_tarball
 
 echo "* Guildnet Install Script Starting"
 
