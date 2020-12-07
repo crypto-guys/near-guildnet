@@ -70,7 +70,7 @@ nearup guildnet --nodocker
 
 - **Step 1** Compile the code - Install The Service
 ```
-curl --proto '=https' --tlsv1.2 -sSfL https://raw.githubusercontent.com/crypto-guys/near-guildnet/main/nearcore/install/install.sh | sudo sh
+curl --proto '=https' --tlsv1.2 -sSfL https://raw.githubusercontent.com/crypto-guys/near-guildnet/main/nearcore/install/install.sh | sudo /bin/bash
 ```
 - **Systemd Usage**
 
