@@ -47,7 +47,7 @@ profiles:
       type: nic
     root:
       path: /
-      pool: defaul
+      pool: default
       type: disk
   name: default
 cluster: null
