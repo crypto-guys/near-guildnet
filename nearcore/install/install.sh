@@ -23,8 +23,7 @@ sleep 30
 
 echo "* Initializing LXD"
     cat <<EOF | sudo lxd init --preseed
-config:
-  images.auto_update_interval: 15
+config: []
 storage_pools:
 - config:
     size: 20GB
