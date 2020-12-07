@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eu
 # Script settings 
-RELEASE=bionic
+RELEASE=$(lsb_release -c -s)
 NEAR_VERSION=1.16.2-guildnet
 NEAR_REPO="https://github.com/crypto-guys/nearcore.git"
 vm_name="compiler"
