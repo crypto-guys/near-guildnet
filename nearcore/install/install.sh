@@ -19,8 +19,6 @@ function update_via_apt ()
 
 }
 
-echo '* Pause 30 seconds'
-sleep 30
 # sudo usermod -aG lxd $NAME
 
 function init_lxd () 
