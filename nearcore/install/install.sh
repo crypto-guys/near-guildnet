@@ -66,8 +66,7 @@ function launch_container
 {
     echo "* Detected Ubuntu $RELEASE"
     echo "* Launching Ubuntu $RELEASE LXC container to build in"
-    lxc init ubuntu:${RELEASE} ${vm_name}
-    lxc launch ${vm_name}
+    lxc launch ubuntu:${RELEASE} ${vm_name}
     echo "* Pausing for 90 seconds while the container initializes"
     sleep 90
     echo "* Install Required Packages"
