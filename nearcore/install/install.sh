@@ -59,7 +59,7 @@ sleep 15
 
 echo "* Detected Ubuntu $RELEASE"
 echo "* Launching Ubuntu $RELEASE LXC container to build in"
-lxc launch ubuntu:$RELEASE ${vm_name}
+lxc launch ubuntu:${RELEASE} ${vm_name}
 echo "* Pausing for 90 seconds while the container initializes"
 sleep 90
 
@@ -74,7 +74,7 @@ lxc exec ${vm_name} -- /snap/bin/rustup default nightly
 lxc exec ${vm_name} -- /snap/bin/rustup update
 
 echo "* Cloning the github source"
-lxc exec ${vm_name} -- sh -c "rm -rf /tmp/src && mkdir -p /tmp/src/ && git clone $NEAR_REPO /tmp/src/nearcore"
+lxc exec ${vm_name} -- sh -c "rm -rf /tmp/src && mkdir -p /tmp/src/ && git clone ${NEAR_REPO} /tmp/src/nearcore"
 echo "* Switching Version"
 lxc exec ${vm_name} -- sh -c "cd /tmp/src/nearcore && git checkout 1.16.2-guildnet"
 echo "* Attempting to compile"
