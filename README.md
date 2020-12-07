@@ -76,28 +76,28 @@ curl --proto '=https' --tlsv1.2 -sSfL https://raw.githubusercontent.com/crypto-g
 
 - Enabling the service on boot
 ```
-sudo systemctl enable neard-guildnet.service
+sudo systemctl enable neard.service
+sudo systemctl disable neard.service
 ```
-- Starting the service
+
+- Start, Stop, Get Status 
 ```
-sudo systemctl start neard-guildnet.service
-```
-- Stopping the service
-```
-sudo systemctl stop neard-guildnet.service
-```
-- Check service status
-```
-sudo systemctl status near-guildnet.service
+sudo systemctl start neard.service
+
+sudo systemctl stop neard-guildnetservice
+
+sudo systemctl status neard.service
 ```
 - Check the validators log. 
-- **Please note:** By default logs goe to the system journal 
-- This is controlled by the file /var/lib/systemd/neard-guildnet.service   
-To output logs to the specified file and append data uncomment this line
+- **Please note:** By default logs go to the system journal 
+- This is controlled by the file /usr/lib/systemd/journald.conf.d/neard.conf 
+
+To output logs to the specified file and append data uncomment this line from /usr/lib/systemd/neard.service  
 ```
 #StandardOutput=append:/var/log/guildnet.log
 ```
 
+- Check the logs
 ```
 sudo journalctl -u near-guildnet -x
 sudo journalctl --help
