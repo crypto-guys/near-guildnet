@@ -43,7 +43,7 @@ sudo apt install python3 git curl snapd
 
 - There are 2 ways to install nearcore currently. You can use Nearup or you can compile the source and use systemd to manage it.
 
-#### Option 1 - Use Nearup
+### Option 1 - Use Nearup
 
 - **Step 1.Install Nearup**
 
@@ -66,13 +66,13 @@ nearup guildnet --nodocker
 
 ```
 
-#### Option 2 - Compile and Use Systemd
+### Option 2 - Compile from source and Use Systemd
 
 - **Step 1** Compile the code - Install The Service
 ```
 wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/main/nearcore/install/install.sh
 chmod +x install.sh
-./install.sh
+sudo ./install.sh
 ```
 - **Systemd Usage**
 
@@ -101,9 +101,11 @@ To output logs to the specified file and append data uncomment this line from /u
 
 - Check the logs
 ```
-sudo journalctl -u neard -x
-sudo journalctl --help
+sudo journalctl -x -u neard
 ```
+For more information on using journalctl use this command 
+
+```journalctl --help```
 
 ## Verify your install
 
