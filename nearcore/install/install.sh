@@ -5,7 +5,7 @@ RELEASE=$(lsb_release -c -s)
 # Change this to compile a different
 NEAR_VERSION=1.16.2
 # Change this to use a different repo
-NEAR_REPO="https://github.com/crypto-guys/nearcore.git"
+NEAR_REPO="https://github.com/solutions-crypto/nearcore.git"
 vm_name="compiler"
 
 echo "* Starting the GUILDNET build process"
@@ -194,4 +194,4 @@ lxc delete compiler
 #sudo snap remove --purge lxd
 rm -rf /tmp/near
 
-echo '* You should now verify your validator key is correct'
+echo '* You should restart the machine now due to changes made to the logging system then check your validator key'
