@@ -177,10 +177,12 @@ echo 'export NODE_ENV=guildnet' >> ~/.bashrc
 ```
 
 ## Authorize NEAR-Cli
-To authorize NEAR-Cli access we need to login via the command prompt.
+- To authorize NEAR-Cli access you need your keys in the folder ~/.near-credentials/guildnet (if you have your keyfiles here no need to login)
+- To use the web wallet to get the keys we need to login via the command prompt.
 ```bash
 near login
 ```
+
 Subsequently, the browser will be opened, if it does not simply copy and paste the generated link into the browser. You may need to restore your wallet account via Seed Phase. This action will authorize NEAR-cli access to main account via the shell.  
 ```
 We recommend using <your account>.guildnet as main accountId and <your pool>.stake.guildnet as pool ID below.
