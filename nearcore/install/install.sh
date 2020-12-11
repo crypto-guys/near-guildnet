@@ -87,7 +87,7 @@ function compile_source
     echo "* Cloning the github source"
     lxc exec ${vm_name} -- sh -c "rm -rf /tmp/src && mkdir -p /tmp/src/ && git clone ${NEAR_REPO} /tmp/src/nearcore"
     echo "* Switching Version"
-    lxc exec ${vm_name} -- sh -c "cd /tmp/src/nearcore && git checkout 1.16.2-guildnet"
+    lxc exec ${vm_name} -- sh -c "cd /tmp/src/nearcore && git checkout $NEAR_VERSION"
     echo "* Attempting to compile"
     lxc exec ${vm_name} -- sh -c "cd /tmp/src/nearcore && make release"
     lxc exec ${vm_name} -- sh -c "mkdir ~/binaries"
