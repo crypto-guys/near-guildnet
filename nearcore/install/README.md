@@ -1,6 +1,6 @@
 ## Description
 
-- Compiles nearcore-1.16.2-guildnet in an lxc container and exports a tar file with binaries
+- Compiles nearcore-1.16.2 for guildnet in an lxc container and exports a tar file with binaries
 - Sets up the machine to run the binaries using systemd 
 - Configures a new guildnet validator with config, genesis, and keys
 - Options for logging
@@ -17,7 +17,7 @@
 ```
 wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/main/nearcore/install/install.sh
 chmod +x install.sh
-./install.sh
+sudo ./install.sh
 ```
 
 The installer script has an option to enter the validator name so the validator key is generated correctly
@@ -47,6 +47,6 @@ If you prefer logs to go to a file uncomment the noted line in the neard-guildne
     ```sudo systemctl status near-guildnet.service```
 
 - View logs available
-    ```journalctl -u neard-guildnet -x```
+    ```sudo journalctl -x -u neard-guildnet ```
     ```journalctl --help"
 
