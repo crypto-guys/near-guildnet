@@ -124,6 +124,9 @@ Take note of the **validator public_key**
 Check running status of validator node. If "V/" is showning up, your pool is selected in current validators list.
 ```bash
 nearup logs -f
+
+# Or if you compiled yourself
+sudo journalctl -u neard -f
 ```
 
 ## Create a wallet on GuildNet
