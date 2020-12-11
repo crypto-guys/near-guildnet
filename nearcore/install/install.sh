@@ -2,7 +2,9 @@
 set -eu
 # Script settings 
 RELEASE=$(lsb_release -c -s)
-NEAR_VERSION=1.16.2-guildnet
+# Change this to compile a different
+NEAR_VERSION=1.16.2
+# Change this to use a different repo
 NEAR_REPO="https://github.com/crypto-guys/nearcore.git"
 vm_name="compiler"
 
