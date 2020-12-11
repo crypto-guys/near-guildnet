@@ -48,5 +48,5 @@ If you prefer logs to go to a file uncomment the noted line in the neard-guildne
 
 - View logs available
     ```sudo journalctl -x -u neard-guildnet ```
-    ```journalctl --help"
+    ```journalctl --help```
 
