@@ -13,7 +13,7 @@
 ## Instructions
 
 - The install script will create the directories, user account, systemd service, and set the permissions for you. Ubuntu should be set up and you should run the script with the user you will be managing the node with.
-- **Please NOTE**: This script is configure to compile a specific version of nearcore for the guildnet network. However by changing the github repo and version variables you can compile any nearcore version for any network in a LXC container that deletes itself when finished.
+- **Please NOTE**: This script is configured to compile a specific version of nearcore for the guildnet network. However by changing the github repo and version variables you can compile any nearcore version for any network in a LXC container that deletes itself when finished.
 
 ```
 wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/main/nearcore/install/install.sh
