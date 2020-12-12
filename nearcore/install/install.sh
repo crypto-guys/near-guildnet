@@ -12,6 +12,13 @@ echo "* Starting the GUILDNET build process"
 echo "***  What is your validator accountId?  ***"
 read VALIDATOR_ID
 
+echo "***  Do you want to install the NEARD guildnet Service?  y/n?***"
+read NEAR_COMPILE
+
+echo "***  Do you want to install the NEARD guildnet Service?  y/n?***"
+read NEARD_INSTALL
+
+
 function update_via_apt
 {
     echo "* Updating via APT and installing required packages"
@@ -105,18 +112,18 @@ function get_tarball
 }
 
 
-if [ $USER != "root" ]
-then
-echo " Run sudo su before starting the script please"
-exit
-fi
+
+function compile_nearcore {
 update_via_apt
 init_lxd
 launch_container
 compile_source
 get_tarball
+echo "***  The compile process has completed the binaries were stored in /tmp/near/nearcore.tar"
+}
 
-
+function create_neard_service
+{
 echo "* Guildnet Install Script Starting"
 
 # Script settings
@@ -185,6 +192,28 @@ EOF
 echo '* Service Status 'sudo systemctl status neard.service' *'
 sudo systemctl enable neard.service
 sudo systemctl status neard.service
+
+}
+
+
+if [ $USER != "root" ]
+then
+echo " Run sudo su before starting the script please"
+exit
+fi
+
+if [ $NEAR_COMPILE == y ]
+then
+compile_nearcore
+fi
+
+if [ $NEARD_INSTALL == y ]
+then
+echo "* YOU MUST HAVE A TARFILE WITH THE BINARIES IN /tmp/near/nearcore.tar to install without running the compile first"
+sleep 30
+create_neard_service
+fi
+
 
 echo '* The installation has completed removing the installer'
 lxc stop compiler
