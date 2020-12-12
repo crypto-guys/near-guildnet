@@ -12,12 +12,14 @@ echo "* Starting the GUILDNET build process"
 echo "***  What is your validator accountId?  ***"
 read VALIDATOR_ID
 
-echo "***  Do you want to install the NEARD guildnet Service?  y/n?***"
+echo "***  Do you want to compile the nearcore binaries?  y/n?  ***"
 read NEAR_COMPILE
 
-echo "***  Do you want to install the NEARD guildnet Service?  y/n?***"
+echo "***  Do you want to install the NEARD guildnet Service?  y/n?  ***"
 read NEARD_INSTALL
 
+echo "***  Do you want to remove the compiler components when finished? y/n?  ***"
+read AUTO_REMOVE
 
 function update_via_apt
 {
@@ -195,6 +197,15 @@ sudo systemctl status neard.service
 
 }
 
+function clean_up 
+{
+echo '* Removing build container, Removing LXD, Removing tmp files, creating a backup copy of tarbarll in /usr/local/share'
+lxc stop compiler
+lxc delete compiler
+#sudo snap remove --purge lxd
+cp /tmp/near/nearcore.tar /usr/local/share
+rm -rf /tmp/near
+}
 
 if [ $USER != "root" ]
 then
@@ -210,15 +221,13 @@ fi
 if [ $NEARD_INSTALL == y ]
 then
 echo "* YOU MUST HAVE A TARFILE WITH THE BINARIES IN /tmp/near/nearcore.tar to install without running the compile first"
-sleep 30
+sleep 10
 create_neard_service
 fi
 
-
-echo '* The installation has completed removing the installer'
-lxc stop compiler
-lxc delete compiler
-#sudo snap remove --purge lxd
-rm -rf /tmp/near
+if [ $AUTO_REMOVE == y ]
+then
+clean_up
+fi
 
 echo '* You should restart the machine now due to changes made to the logging system then check your validator key'
