@@ -120,7 +120,6 @@ get_tarball
 echo "* Guildnet Install Script Starting"
 
 # Script settings
-CONFIG_URL="https://s3.us-east-2.amazonaws.com/build.openshards.io/nearcore-deploy/guildnet/config.json"
 TARBALL="/tmp/near/nearcore.tar"
 
 echo "* Setting up required accounts, groups, and privilages"
@@ -138,7 +137,6 @@ sudo cp -p /tmp/near/binaries/* /usr/local/bin
 
 echo '* Getting the correct files and fixing permissions'
 sudo neard --home /usr/lib/near/guildnet/ init --download-genesis --chain-id guildnet --account-id $VALIDATOR_ID
-sudo wget $CONFIG_URL -O /usr/lib/near/guildnet/config.json
 sudo chown -R neard-guildnet:near -R /usr/lib/near
 
 echo "* Creating systemd unit file for NEAR validator service"
