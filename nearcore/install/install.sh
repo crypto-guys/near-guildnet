@@ -9,8 +9,8 @@ NEAR_REPO="https://github.com/solutions-crypto/nearcore.git"
 vm_name="compiler"
 
 echo "* Starting the GUILDNET build process"
-
-VALIDATOR_ID=$(read -t 20 -p "What is your validator accountId?")
+echo "***  What is your validator accountId?  ***"
+read VALIDATOR_ID
 
 function update_via_apt
 {
