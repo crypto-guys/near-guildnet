@@ -2,7 +2,7 @@
 set -eu
 # Script settings 
 RELEASE=$(lsb_release -c -s)
-# Change this to compile a different
+# Change this to compile a different Version 
 NEAR_VERSION=1.16.2
 # Change this to use a different repo
 NEAR_REPO="https://github.com/solutions-crypto/nearcore.git"
