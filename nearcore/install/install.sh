@@ -68,8 +68,7 @@ networks:
   type: ""
   project: default
 storage_pools:
-- config:
-    size: 20GB
+- config: {}
   description: ""
   name: guildnet
   driver: dir
