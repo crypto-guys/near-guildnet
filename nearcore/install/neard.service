@@ -1,0 +1,21 @@
+[Unit]
+Description=NEAR GUILDNET Validator Service
+Documentation=https://github.com/nearprotocol/nearcore
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+# TODO: Verify this should not be forked
+# https://www.digitalocean.com/community/tutorials/understanding-systemd-units-and-unit-files
+Type=exec
+User=neard-guildnet
+Group=near
+ExecStart=neard --home /usr/lib/near/guildnet/ run
+# TODO: Fixup the management of the service
+#Restart=on-failure
+#RestartSec=80
+# You can enable logging to a file with this line change the word append to file if you want a new file created every service start
+StandardOutput=append:/var/log/guildnet.log
+
+[Install]
+WantedBy=multi-user.target
