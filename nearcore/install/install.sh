@@ -72,7 +72,7 @@ storage_pools:
     size: 20GB
   description: ""
   name: guildnet
-  driver: btrfs
+  driver: dir
 profiles:
 - config: {}
   description: ""
