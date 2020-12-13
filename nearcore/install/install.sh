@@ -7,27 +7,33 @@ NEAR_VERSION=1.16.2
 # Change this to use a different repo
 NEAR_REPO="https://github.com/solutions-crypto/nearcore.git"
 vm_name="compiler"
-
-
-# This will make sure the user has root privilages to execute the script if not the script exits.
-if [ $USER != "root" ]
-then
-echo " Run sudo su before starting the script please"
-exit
-fi
-
-# User Inputs 
+ 
+# User Section 
 # NOTE: You are not required to run the compile process it is options. 
 # but the file /tmp/near/nearcore.tar is required for the install portion of the script
 # The tar file contains 1 folder named binaries with all binaries inside of it 
 # 
-######################
+#######################################################################################################
+
+# Ensure the user has root privilages to execute the script
+if [ $USER != "root" ]
+then
+echo " Run sudo su before starting the script please. EXITING>>>!!!"
+exit
+fi
+
 echo "***  Do you want to compile the nearcore binaries?  y/n?  ***"
 read NEAR_COMPILE
 
 echo "***  Do you want to install the NEARD guildnet Service?  y/n?  ***"
 read NEARD_INSTALL
 
+if [ $NEARD_INSTALL == y ]
+then
+    echo "***  Please input your validator-id  ***"
+    read VALIDATOR_ID
+fi
+ 
 echo "*** PLEASE NOTE: if you choose to enable the autoremove feature the tar file with the nearcore binaries will be moved to /usr/local/share upon script completion"
 echo "***  Do you want to remove the install extra components and tmp files (LXD and /tmp/near) when finished? y/n?  ***"
 read AUTO_REMOVE
