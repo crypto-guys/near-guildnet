@@ -8,19 +8,33 @@ NEAR_VERSION=1.16.2
 NEAR_REPO="https://github.com/solutions-crypto/nearcore.git"
 vm_name="compiler"
 
-echo "* Starting the GUILDNET build process"
-echo "***  What is your validator accountId?  ***"
-read VALIDATOR_ID
 
+# This will make sure the user has root privilages to execute the script if not the script exits.
+if [ $USER != "root" ]
+then
+echo " Run sudo su before starting the script please"
+exit
+fi
+
+# User Inputs 
+# NOTE: You are not required to run the compile process it is options. 
+# but the file /tmp/near/nearcore.tar is required for the install portion of the script
+# The tar file contains 1 folder named binaries with all binaries inside of it 
+# 
+######################
 echo "***  Do you want to compile the nearcore binaries?  y/n?  ***"
 read NEAR_COMPILE
 
 echo "***  Do you want to install the NEARD guildnet Service?  y/n?  ***"
 read NEARD_INSTALL
 
-echo "***  Do you want to remove the compiler components when finished? y/n?  ***"
+echo "*** PLEASE NOTE: if you choose to enable the autoremove feature the tar file with the nearcore binaries will be moved to /usr/local/share upon script completion"
+echo "***  Do you want to remove the install extra components and tmp files (LXD and /tmp/near) when finished? y/n?  ***"
 read AUTO_REMOVE
 
+#######################################################################################################
+# This section has all funcitons the script will use they are ignored unless called upon 
+#######################################################################################################
 function update_via_apt
 {
     echo "* Updating via APT and installing required packages"
@@ -105,6 +119,7 @@ function compile_source
     lxc exec ${vm_name} -- sh -c "cd /tmp && tar -cf nearcore.tar -C ~/ binaries/"
 }
 
+# Create a tar file of the binaries and puts them in /tmp/near/nearcore.tar
 function get_tarball
 {
     echo "* Retriving the tarball and storing in /tmp/near/nearcore.tar"
@@ -114,7 +129,8 @@ function get_tarball
 }
 
 
-
+# This function is the main function that installes the components required for compiling the source 
+# It also compiles the code and exports the results in a tar file
 function compile_nearcore {
 update_via_apt
 init_lxd
@@ -124,6 +140,7 @@ get_tarball
 echo "***  The compile process has completed the binaries were stored in /tmp/near/nearcore.tar"
 }
 
+# Creating a system service that will run with the non privilaged service account neard-guildnet
 function create_neard_service
 {
 echo "* Guildnet Install Script Starting"
@@ -197,22 +214,26 @@ sudo systemctl status neard.service
 
 }
 
+# Removing the LXC container used to compile the code
+# Removing LXD which is the only software we require but is not generally used oherwise.
+# We do not remove snapd because it now ships with ubuntu by default and we find it to be quite useful the commented line will remove snapd if you remove the #
 function clean_up 
 {
 echo '* Removing build container, Removing LXD, Removing tmp files, creating a backup copy of tarbarll in /usr/local/share'
 lxc stop compiler
 lxc delete compiler
-#sudo snap remove --purge lxd
+sudo snap remove --purge lxd
+# sudo apt purge snapd --autoremove
 cp /tmp/near/nearcore.tar /usr/local/share
 rm -rf /tmp/near
 }
 
-if [ $USER != "root" ]
-then
-echo " Run sudo su before starting the script please"
-exit
-fi
+# END Functions
+#######################################################################################################
 
+
+#######################################################################################################
+# Using user supplied input to determine which parts of the script to run
 if [ $NEAR_COMPILE == y ]
 then
 compile_nearcore
