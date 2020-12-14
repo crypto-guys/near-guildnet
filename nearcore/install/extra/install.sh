@@ -13,17 +13,6 @@ NEAR_VERSION="1.16.2"
 NEAR_REPO="https://github.com/solutions-crypto/nearcore.git"
 vm_name="compiler"
  
-# Ensure the user has root privilages to execute the script
-if [ "$USER" != "root" ]
-then
-echo " You must run this script with sudo privilage hint: "sudo ./install.sh" -->>EXITING>>>!!!"
-exit
-fi
-
-#######################################################################################################
-# This section has all funcitons the script will use they are ignored unless called upon 
-#######################################################################################################
-
 # Update and install required packages 
 function update_via_apt
 {
@@ -85,6 +74,7 @@ function launch_container
     then
     lxc launch images:68d4b58311e0 ${vm_name}
     fi
+    
     if [ "$RELEASE" == "bionic" ]
     then
     lxc launch images:88cd379f1e63 ${vm_name}
