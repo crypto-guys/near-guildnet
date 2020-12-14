@@ -193,7 +193,7 @@ function create_neard_service
     sudo wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/main/nearcore/install/near.conf --output-file /usr/lib/systemd/journald.conf.d/neard.conf
 
     echo '* The NEARD service is installed and ready to be enabled and started'
-    echo '* Use "sudo systemctl enable /usr/lib/systemd/neard.service" to enable then use "sudo systemctl start neard" to start" to enable'
+    echo '* Use "sudo systemctl enable /usr/lib/systemd/neard.service" to enable the service then use "sudo systemctl start neard" to start the service'
 }
 
 function clean_up
