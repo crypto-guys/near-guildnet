@@ -43,8 +43,12 @@ wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/main/nearcore/i
 chmod +x remove.sh
 sudo ./remove.sh
 ```
+##### To re-user a container 
+- ( the name of the existing container must be compiler )
+- edit install.sh
+- There are 2 lines that contain "launch_container" comment out the one that contains only that phrase. This will prevent the script from trying to create a new container to use and the existing container named compiler will be used.
 
-The installer script has an option to enter the validator name so the validator key is generated correctly
+The install script has an option to enter the validator name so the validator key is generated correctly
 
 
 ## Use
