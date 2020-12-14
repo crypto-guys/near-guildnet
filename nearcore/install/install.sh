@@ -208,7 +208,7 @@ function clean_up
 
     echo '* Would you like to uninstall LXD? '
     read DEL_LXD
-    if [ "$DELETE_LXD" == "y"]
+    if [ "$DE_LXD" == "y"]
     then
     sudo snap remove lxd --purge
     fi
@@ -243,3 +243,4 @@ create_user_and_group
 create_neard_service
 clean_up
 fi
+
