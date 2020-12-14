@@ -1,5 +1,5 @@
 [Unit]
-Description=Near Validator Service
+Description=NEAR Validator Service
 Documentation=https://github.com/near-guildnet/nearcore
 After=network-online.target
 Requires=network-online.target
