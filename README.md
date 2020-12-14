@@ -107,6 +107,17 @@ For more information on using journalctl use this command
 
 ```journalctl --help```
 
+Verify your validator key and name are correct
+```bash
+ls /usr/lib/near/guildnet
+# validator_key.json  node_key.json  config.json  data  genesis.json
+cat /usr/lib/near/guildnet | grep public_key
+```
+Make sure the name is correct and take note of the public key.
+
+Skip to the Create a Wallet section.....
+
+
 ## Verify your install
 
 Check validator_key.json is generated for staking pool.
@@ -119,7 +130,6 @@ Take note of the **validator public_key**
 ```json
     "public_key": "ed25519:**TAKE-NOTE-OF-THIS**"
 ```
-
 
 Check running status of validator node. If "V/" is showning up, your pool is selected in current validators list.
 ```bash
