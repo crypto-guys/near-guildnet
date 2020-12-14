@@ -68,10 +68,10 @@ nearup guildnet --nodocker
 
 ### Option 2 - Compile from source and Use Systemd
 
+- The [readme file](https://github.com/crypto-guys/near-guildnet/blob/main/nearcore/install/README.md)   <------  More Detailed script instructions
 - **Step 1** Compile the code - Install The Service
 ```
 wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/main/nearcore/install/install.sh
-chmod +x install.sh
 sudo ./install.sh
 ```
 - **Systemd Usage**
