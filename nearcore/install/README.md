@@ -1,20 +1,31 @@
 ## Description
 
-- Compiles nearcore-1.16.2 for guildnet in an lxc container and exports a tar file with binaries
-- Sets up the machine to run the binaries using systemd 
+- Compiles nearcore-1.16.2 for guildnet 
+- Creates a lxc container to compile the binaries and exports a tar file with binaries back to the host
+- Sets up the host machine to run the binaries using systemd 
+- Creates a neard system service that runs with a non-privilaged system account
 - Configures a new guildnet validator with config, genesis, and keys
 - Options for logging
-- Removes everything installed for the compile process
+- Removes everything installed for the compile process if requested
+
+This script could be used in many ways have fun!!!
 
 ## Requirements
 
 - Ubuntu (**20.04 focal** or **18.04 bionic**)
+- sudo access
     
 ## Instructions
 
-- The install script will create the directories, user account, systemd service, and set the permissions for you. Ubuntu should be set up and you should run the script with the user you will be managing the node with.
-- **Please NOTE**: This script is configured to compile a specific version of nearcore for the guildnet network. However by changing the github repo and version variables you can compile any nearcore version for any network in a LXC container that deletes itself when finished.
-
+- The install script will create the directories, user account, systemd service, and set the permissions for you. 
+- Ubuntu should be set up and you should run the script using sudo from your users account.
+- The script has 3 steps. 
+    1. Compile
+    2. Install
+    3. Clean Up
+- You can choose to run any 1 or all of these steps when you run the script.
+- Please do not run the Clean Up step until you are finished installing and have verified it is working.
+        
 ```
 wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/main/nearcore/install/install.sh
 chmod +x install.sh
@@ -23,12 +34,13 @@ sudo ./install.sh
 
 The installer script has an option to enter the validator name so the validator key is generated correctly
 
+
 ## Use
 
 ### Using the install script
 
 - This script can be used to compile any version of nearcore from any repo you specify see lines 5-8 of install.sh
-- If you want to just compile the source code and get a tarball look in the install.sh code comments
+
 
 #### Enabling the service on boot
 - ```sudo systemctl enable neard-guildnet.service```
