@@ -133,6 +133,7 @@ function compile_source
     lxc exec ${vm_name} -- sh -c "mkdir ~/binaries"
     lxc exec ${vm_name} -- sh -c "cd /tmp/src/nearcore/target/release/ && mv near nearcore"
     lxc exec ${vm_name} -- sh -c "cd /tmp/src/nearcore/target/release/ && cp /tmp/src/nearcore/target/release/neard ~/binaries/"
+    lxc exec ${vm_name} -- sh -c "cd /tmp/src/nearcore/target/release/ && cp /tmp/src/nearcore/target/release/keypair-generator ~/binaries/"
     lxc exec ${vm_name} -- sh -c "cd /tmp && tar -cf nearcore.tar -C ~/ binaries/"
 }
 
