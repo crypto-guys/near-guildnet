@@ -39,8 +39,8 @@ The installer script has an option to enter the validator name so the validator 
 
 ### Using the install script
 
-- This script can be used to compile any version of nearcore from any repo you specify see lines 5-8 of install.sh
-
+- This script can be used to compile any version of nearcore from any repo you specify see lines 8 thru 11 of install.sh
+- sudo ./install.sh
 
 #### Enabling the service on boot
 - ```sudo systemctl enable neard-guildnet.service```
