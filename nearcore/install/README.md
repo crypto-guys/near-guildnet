@@ -91,3 +91,20 @@ If you prefer logs to go to a file uncomment the noted line in the neard-guildne
     - Get help
     ```journalctl --help```
 
+#### Troubleshooting
+
+- If the script fails. First verify if you have the tar file with binaries inside.
+```
+ls /tmp/near/nearcore.tar
+```
+
+If you have tar file the compile step produces you can skip the compile process. 
+
+- To start over use the clean_up.sh script
+```
+wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/main/nearcore/install/ckean_up.sh
+chmod +x clean_up.sh
+sudo ./clean_up.sh
+```
+
+
