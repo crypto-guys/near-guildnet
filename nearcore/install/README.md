@@ -33,12 +33,14 @@ This script could be used in many ways have fun!!!
 ##### To Install
 ```
 wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/main/nearcore/install/install.sh
+chmod +x install.sh
 sudo ./install.sh
 ```
 
 ##### To remove
 ```
 wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/main/nearcore/install/remove.sh
+chmod +x remove.sh
 sudo ./remove.sh
 ```
 
