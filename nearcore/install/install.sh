@@ -197,15 +197,23 @@ function create_neard_service
 
 function clean_up 
 {
-    echo '* Removing the LXC container used to compile the code. '
-    echo '* Removing LXD... We do not remove snapd because it now ships with UBUNTU by default and we find it to be quite useful  '
+    echo '* Would you like to delete the LXC container used to compile?   y/n?'
+    read DELETE_CONT
+    if [ "$DELETE_CONT" == "y" || "$DELETE_CONT" == "yes" ]
+    then
+    sudo lxc stop compiler
+    sudo lxc delete compiler
+    fi
+    
+    echo '* Would you like to uninstall LXD we installed it for the build container? '
+    read DEL_LXD
+    if [ "$DELETE_LXD" == "y" || "$DELETE_LXD" == "yes" ]
+    then
+    sudo snap remove lxd --purge
+    fi
     echo '* To manually remove snapd ---   sudo apt purge snapd --autoremove'
     echo '* '
     echo '* Creating a backup copy of tarbarll in /usr/local/share'
-    lxc stop compiler
-    lxc delete compiler
-    sudo snap remove --purge lxd
-    # sudo apt purge snapd --autoremove
     cp /tmp/near/nearcore.tar /usr/local/share
     rm -rf /tmp/near
 }
