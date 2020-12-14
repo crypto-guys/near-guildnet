@@ -134,7 +134,7 @@ function compile_source
     echo "* Switching Version"
     lxc exec ${vm_name} -- sh -c "cd /tmp/src/nearcore && git checkout $NEAR_VERSION"
     echo "* Attempting to compile"
-    lxc exec ${vm_name} -- sh -c "cd /tmp/src/nearcore && make elease"
+    lxc exec ${vm_name} -- sh -c "cd /tmp/src/nearcore && make release"
     lxc exec ${vm_name} -- sh -c "mkdir ~/binaries"
     lxc exec ${vm_name} -- sh -c "cd /tmp/src/nearcore/target/release/ && mv near nearcore"
     lxc exec ${vm_name} -- sh -c "cd /tmp/src/nearcore/target/release/ && cp * ~/binaries/"
