@@ -7,7 +7,7 @@ This is a cloud-init file can be used with hetzner cloud services. This file is 
 
 ## Requirements
 
-1. The ssd_config that is provided with this script only allows Pubkey authentication. If you wish to use anything else change the script or provide your own sshd_config
+1. The sshd_config that is provided with this script only allows Pubkey authentication. If you wish to use anything else change the script or provide your own sshd_config
 2. You must provide your ssh public key in the file where it says authorized keys
 3. Scripts are to be encoded using base64 with no line wrapping.
 
