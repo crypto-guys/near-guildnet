@@ -43,7 +43,7 @@ The installer script has an option to enter the validator name so the validator 
 - sudo ./install.sh
 
 #### Enable the service to start on boot 
-- ```sudo systemctl enable neard-guildnet.service```
+- ```systemctl enable /usr/lib/systemd/neard.service```
 
 #### Starting the service
 - ```sudo systemctl start neard-guildnet.service```
@@ -63,8 +63,17 @@ If you prefer logs to go to a file uncomment the noted line in the neard-guildne
 - Quick check to see the validators most recent status
     ```sudo systemctl status near-guildnet.service```
 
-- View logs available
-    ```sudo journalctl -x -u neard-guildnet ```
+- View logs
+
+    - get all unit file records
+    ```sudo journalctl -a -u neard-guildnet ```  
     
+    - follow the unit file journal
+    ```sudo journalctl -u neard-guildnet -f``` 
+    
+    -  follow the journal
+    ```sudo journalctl -f ```
+    
+    - Get help
     ```journalctl --help```
 
