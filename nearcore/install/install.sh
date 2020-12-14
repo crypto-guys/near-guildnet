@@ -39,8 +39,9 @@ echo "***  Please input your validator-id  ***"
 read -r VALIDATOR_ID
 fi
  
-echo "***  PLEASE NOTE: If you answer yes to this question the tarfile with binaries will be backed up to /usr/local/share "
-echo "***  Do you want to remove the data created/installed by this script when finished interaction required?   y/n?  ***"
+echo "***  PLEASE NOTE: If you answer yes to this question the tarfile with binaries will be backed up to /usr/local/share   ***"
+echo "***  It is suggested to run this step after you have finished installing NEARD.   ***"
+echo "***  Do you want to remove the data created/installed by this script when finished interaction required?   y/n?  "
 read -r AUTO_REMOVE
 
 #######################################################################################################
@@ -193,30 +194,22 @@ function create_neard_service
     echo '* Service Status 'sudo systemctl status neard.service' *'
     sudo systemctl enable /usr/lib/near/neard.service
     sudo systemctl status neard.service
+    echo '* The NEARD service is installed and ready to be started'
 }
 
-function clean_up 
+function clean_up
 {
-    if [ "AUTO_REMOVE" == "n" ]
-    then
-    quit
-    fi
-
     echo '* Deleting the container used to compile '
     sudo lxc stop compiler
     sudo lxc delete compiler
 
-    echo '* Would you like to uninstall LXD? '
-    read DEL_LXD
-    if [ "$DEL_LXD" == "y"]
-    then
-    sudo snap remove lxd --purge
-    fi
-    echo '* To manually remove snapd ---   sudo apt purge snapd --autoremove'
-    echo '* '
+    echo '* To only remove lxd use the command " sudo snap remove lxd --purge " '
+    echo '* To remove snapd and lxd use the comman     " sudo apt purge snapd --autoremove " '
     echo '* Creating a backup copy of tarbarll in /usr/local/share'
     cp /tmp/near/nearcore.tar /usr/local/share
     rm -rf /tmp/near
+
+    echo '* Successfully removed all files and packages'
     echo '* You should first verify your validator key is the same as your staking contract '
     echo '* Once verified please restart the computer and the neard service will activate upon reboot '
 
@@ -228,19 +221,24 @@ function clean_up
 
 #######################################################################################################
 # Use user supplied input to determine which parts of the script to run
-if [ "$NEAR_COMPILE" == y ] || [ "$NEAR_COMPILE" == "yes" ]
+
+
+# Compile
+if [ "$NEAR_COMPILE" == y ]
 then
 compile_nearcore
-clean_up
 fi
 
-
-if [ "$NEARD_INSTALL" == "y" ] || [ "$NEARD_INSTALL" == "yes" ]
+# Install
+if [ "$NEARD_INSTALL" == "y" ]
 then
 echo "* YOU MUST HAVE A TARFILE WITH THE BINARIES IN /tmp/near/nearcore.tar to install without running the compile first"
 sleep 10
 create_user_and_group
 create_neard_service
-clean_up
 fi
 
+if [ "$AUTO_REMOVE" == y ]
+then
+clean_up
+fi
