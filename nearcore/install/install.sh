@@ -40,7 +40,7 @@ read -r VALIDATOR_ID
 fi
  
 echo "***  PLEASE NOTE: If you answer yes to this question the tarfile with binaries will be backed up to /usr/local/share "
-echo "***  Do you want to remove the data created/installed by this script when finished?   y/n?  ***"
+echo "***  Do you want to remove the data created/installed by this script when finished interaction required?   y/n?  ***"
 read -r AUTO_REMOVE
 
 #######################################################################################################
@@ -197,17 +197,18 @@ function create_neard_service
 
 function clean_up 
 {
-    echo '* Would you like to delete the LXC container used to compile?   y/n?'
-    read DELETE_CONT
-    if [ "$DELETE_CONT" == "y" || "$DELETE_CONT" == "yes" ]
+    if [ "AUTO_REMOVE" == "n" ]
     then
+    quit
+    fi
+
+    echo '* Deleting the container used to compile '
     sudo lxc stop compiler
     sudo lxc delete compiler
-    fi
-    
-    echo '* Would you like to uninstall LXD we installed it for the build container? '
+
+    echo '* Would you like to uninstall LXD? '
     read DEL_LXD
-    if [ "$DELETE_LXD" == "y" || "$DELETE_LXD" == "yes" ]
+    if [ "$DELETE_LXD" == "y"]
     then
     sudo snap remove lxd --purge
     fi
@@ -216,6 +217,9 @@ function clean_up
     echo '* Creating a backup copy of tarbarll in /usr/local/share'
     cp /tmp/near/nearcore.tar /usr/local/share
     rm -rf /tmp/near
+    echo '* You should first verify your validator key is the same as your staking contract '
+    echo '* Once verified please restart the computer and the neard service will activate upon reboot '
+
 }
 
 # END Functions
@@ -227,7 +231,9 @@ function clean_up
 if [ "$NEAR_COMPILE" == y ] || [ "$NEAR_COMPILE" == "yes" ]
 then
 compile_nearcore
+clean_up
 fi
+
 
 if [ "$NEARD_INSTALL" == "y" ] || [ "$NEARD_INSTALL" == "yes" ]
 then
@@ -235,12 +241,5 @@ echo "* YOU MUST HAVE A TARFILE WITH THE BINARIES IN /tmp/near/nearcore.tar to i
 sleep 10
 create_user_and_group
 create_neard_service
-fi
-
-if [ "$AUTO_REMOVE" == "y" ] || [ "$AUTO_REMOVE" == "yes" ]
-then
 clean_up
 fi
-
-echo '* You should first verify your validator key is the same as your staking contract '
-echo '* Once verified please restart the computer and the neard service will activate upon reboot '
