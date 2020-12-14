@@ -57,7 +57,7 @@ The install script has an option to enter the validator name so the validator ke
 - ```sudo ./install.sh```
 
 #### Enable the service to start on boot 
-- ```systemctl enable /usr/lib/systemd/neard.service```
+- ```sudo systemctl enable /usr/lib/systemd/neard.service```
 
 #### Starting the service
 - ```sudo systemctl start neard-guildnet.service```
