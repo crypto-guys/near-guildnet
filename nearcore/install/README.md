@@ -28,11 +28,18 @@ This script could be used in many ways have fun!!!
 - This script can be used to compile any version of nearcore from any repo you specify see lines 8 thru 11 of install.sh
 - You can remove everything and start over using the remove.sh script --- can be useful if you run into problems.
 - When answering question use y for Yes and anything else is no
-        
+
+
+##### To Install
 ```
 wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/main/nearcore/install/install.sh
-chmod +x install.sh
 sudo ./install.sh
+```
+
+##### To remove
+```
+wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/main/nearcore/install/remove.sh
+sudo ./remove.sh
 ```
 
 The installer script has an option to enter the validator name so the validator key is generated correctly
