@@ -39,11 +39,6 @@ echo "***  Please input your validator-id  ***"
 read -r VALIDATOR_ID
 fi
  
-echo "***  PLEASE NOTE: If you answer yes to this question the tarfile with binaries will be backed up to /usr/local/share   ***"
-echo "***  It is suggested to run this step after you have finished installing NEARD.   ***"
-echo "***  Do you want to remove the data created/installed by this script when finished interaction required?   y/n?  "
-read -r AUTO_REMOVE
-
 #######################################################################################################
 # This section has all funcitons the script will use they are ignored unless called upon 
 #######################################################################################################
@@ -195,25 +190,6 @@ function create_neard_service
     echo '* The NEARD service is installed and ready to be enabled and started'
     echo '* Use "sudo systemctl enable /usr/lib/systemd/neard.service" to enable the service then use "sudo systemctl start neard" to start the service'
 }
-
-function clean_up
-{
-    echo '* Deleting the container used to compile '
-    sudo lxc stop compiler
-    sudo lxc delete compiler
-
-    echo '* To only remove lxd use the command " sudo snap remove lxd --purge " '
-    echo '* To remove snapd and lxd use the comman     " sudo apt purge snapd --autoremove " '
-    echo '* Creating a backup copy of tarbarll in /usr/local/share'
-    cp /tmp/near/nearcore.tar /usr/local/share
-    rm -rf /tmp/near
-
-    echo '* Successfully removed all files and packages'
-    echo '* You should first verify your validator key is the same as your staking contract '
-    echo '* Once verified please restart the computer and the neard service will activate upon reboot '
-
-}
-
 # END Functions
 #######################################################################################################
 
@@ -235,9 +211,4 @@ echo "* YOU MUST HAVE A TARFILE WITH THE BINARIES IN /tmp/near/nearcore.tar to i
 sleep 10
 create_user_and_group
 create_neard_service
-fi
-
-if [ "$AUTO_REMOVE" == y ]
-then
-clean_up
 fi
