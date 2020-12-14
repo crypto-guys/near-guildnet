@@ -1,5 +1,11 @@
 ## Description
 
+This script will create a contained environment where we can build our binary files and then with the remove script we destroy the environment when finished with it. We could do many different things depending on our environment. For example you could modify the script to export the container to a file located on a network drive so it could be used again the next time we need to compile. If your using an LXD cluster you would now have a container for compiling your nearcore software with many options available to you.
+
+This keeps our host machine clean of any extra packages that could introduce security issues or unexpected behaviour. This is a list of packages the script installs on the host machine ***"snapd squashfs-tools git curl python3"*** you could remove git, python3, and curl from the script and use a minimal ubuntu install to get a smaller footprint. 
+
+Docker does the same thing as LXD / LXC just in a slightly different way.
+
 - Compiles nearcore-1.16.2 for guildnet 
 - Creates a lxc container to compile the binaries and exports a tar file with binaries back to the host
 - Sets up the host machine to run the binaries using systemd 
