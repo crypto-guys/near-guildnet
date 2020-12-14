@@ -14,8 +14,8 @@ This is a cloud-init file can be used with hetzner cloud services. This file is 
 ## Instructions
 
 - Create a new server in the hetzner cloud console.
+- Add you pubic rsa key to the user account section where it says authorized keys  (TIP: no formatting of the data!!! use a shell prompt to cat the file and paste the results into the hetzner screen.)
 - Paste the contents of basic-cloud-init.yaml into the user info section
-- Create the server
 
 - When the server is finished compiling and installing software a message is sent to /var/log/syslog this message contains the word finally so.....
 ```
@@ -27,4 +27,4 @@ cat /var/log/syslog | grep finally
 sudo systemctl enable neard && sudo systemctl start neard
 ```
 
-more to come this isnt complete yet
+Not working yet.... 
