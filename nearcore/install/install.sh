@@ -175,8 +175,8 @@ function create_neard_service
 {
     # Copy Guildnet Files to a suitable location
     sudo mkdir -p /usr/lib/near/guildnet
-    wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/main/nearcore/install/neard.service --output-file /usr/lib/near/neard.service
-    sudo cp neard.service /usr/lib/systemd/neard.service
+    wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/main/nearcore/install/neard.service
+    sudo cp neard.service /usr/lib/near/neard.service
     cd /tmp/near
     tar -xf nearcore.tar
     sudo cp -p /tmp/near/binaries/* /usr/local/bin
@@ -190,7 +190,7 @@ function create_neard_service
     sudo wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/main/nearcore/install/near.conf --output-file /usr/lib/systemd/journald.conf.d/neard.conf
 
     echo '* Service Status 'sudo systemctl status neard.service' *'
-    sudo systemctl enable /usr/lib/systemd/neard.service
+    sudo systemctl enable /usr/lib/near/neard.service
     sudo systemctl status neard.service
 }
 
