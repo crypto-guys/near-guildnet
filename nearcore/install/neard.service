@@ -5,7 +5,7 @@ After=network-online.target
 Requires=network-online.target
 
 [Service]
-Type=exec
+Type=simple
 User=neard-guildnet
 Group=near
 ExecStart=/usr/local/bin/neard --home /usr/lib/near/guildnet/ run
