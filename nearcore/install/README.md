@@ -4,9 +4,9 @@ This script will create a contained environment where we can build our binary fi
 
 This keeps our host machine clean of any extra packages that could introduce security issues or unexpected behaviour. This is a list of packages the script installs on the host machine ***"snapd squashfs-tools git curl python3"*** you could remove git, python3, and curl from the script and use a minimal ubuntu install to get a smaller footprint. 
 
-Docker does the same thing as LXD / LXC just in a slightly different way.
+Docker does the same thing as LXD / LXC just in a slightly different way. Our script will do the following 
 
-- Compiles nearcore-1.16.2 for guildnet 
+- Compile nearcore-1.16.2 for guildnet 
 - Creates a lxc container to compile the binaries and exports a tar file with binaries back to the host
 - Sets up the host machine to run the binaries using systemd 
 - Creates a neard system service that runs with a non-privilaged system account
@@ -25,12 +25,9 @@ This script could be used in many ways have fun!!!
 
 - The install script will create the directories, user account, systemd service, and set the permissions for you. 
 - Ubuntu should be set up and you should run the script using sudo from your users account.
-- The script has 3 steps. 
-    1. Compile
-    2. Install
-    3. Clean Up
-- You can choose to run any 1 or all of these steps when you run the script.
-- Please do not run the Clean Up step until you are finished installing and have verified it is working.
+- This script can be used to compile any version of nearcore from any repo you specify see lines 8 thru 11 of install.sh
+- You can remove everything and start over using the remove.sh script --- can be useful if you run into problems.
+- When answering question use y for Yes and anything else is no
         
 ```
 wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/main/nearcore/install/install.sh
@@ -43,10 +40,8 @@ The installer script has an option to enter the validator name so the validator 
 
 ## Use
 
-### Using the install script
-
-- This script can be used to compile any version of nearcore from any repo you specify see lines 8 thru 11 of install.sh
-- sudo ./install.sh
+### Starting the install script
+- ```sudo ./install.sh```
 
 #### Enable the service to start on boot 
 - ```systemctl enable /usr/lib/systemd/neard.service```
