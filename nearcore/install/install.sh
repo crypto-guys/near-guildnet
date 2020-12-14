@@ -39,8 +39,8 @@ echo "***  Please input your validator-id  ***"
 read -r VALIDATOR_ID
 fi
  
-echo "*** PLEASE NOTE: if you choose to enable the autoremove feature the tar file with the nearcore binaries will be moved to /usr/local/share upon script completion"
-echo "***  Do you want to remove the install extra components and tmp files (LXD and /tmp/near) when finished? y/n?  ***"
+echo "***  PLEASE NOTE: If you answer yes to this question the tarfile with binaries will be backed up to /usr/local/share "
+echo "***  Do you want to remove the data created/installed by this script when finished?   y/n?  ***"
 read -r AUTO_REMOVE
 
 #######################################################################################################
@@ -242,4 +242,5 @@ then
 clean_up
 fi
 
-echo '* You should restart the machine now due to changes made to the logging system then check your validator key'
+echo '* You should first verify your validator key is the same as your staking contract '
+echo '* Once verified please restart the computer and the neard service will activate upon reboot '
