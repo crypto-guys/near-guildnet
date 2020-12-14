@@ -107,7 +107,7 @@ For more information on using journalctl use this command
 
 ```journalctl --help```
 
-Verify your validator key and name are correct
+Verify your install
 ```bash
 ls /usr/lib/near/guildnet
 # validator_key.json  node_key.json  config.json  data  genesis.json
@@ -115,7 +115,7 @@ cat /usr/lib/near/guildnet | grep public_key
 ```
 Make sure the name is correct and take note of the public key.
 
-Skip to the Create a Wallet section.....
+Skip to  [Create a wallet](#Create-a-wallet-on-GuildNet) .....
 
 
 ## Verify your install
