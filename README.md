@@ -154,10 +154,10 @@ _note that Node.js version 10+ is required to run NEAR CLI_
 
 **Note: You don't need to install Near-Cli on the server. We reccomend to install near-cli on your personal machine or a separate machine for increased security and performance. However it still can be installed on the same machine.**
 
-#### Install Node Version 15.x and npm
+#### Install Node Version 14.x and npm
 Nodes.js and npm can be install by
 ```bash
-curl -sL https://deb.nodesource.com/setup_15.x | sudo -E bash -
+curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
 sudo apt install build-essential nodejs
 PATH="$PATH"
 ```
@@ -165,11 +165,11 @@ PATH="$PATH"
 #### Check Node.js and npm version  
 ```bash
 node -v
-    v15.3.0
+    
 npm -v
-    7.0.14
-
 ```
+Both should return versions.
+
 
 ### Install the guild's near-cli
 ```bash
