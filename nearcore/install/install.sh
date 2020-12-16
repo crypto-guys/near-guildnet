@@ -163,8 +163,23 @@ function create_user_and_group
 {
     echo "* Guildnet Install Script Starting"
     echo "* Setting up required accounts, groups, and privilages"
-    sudo groupadd near
-    sudo adduser --system --disabled-login --disabled-password --ingroup near --no-create-home neard-guildnet
+    # Adding group NEAR for any NEAR Services such as Near Exporter
+    near_group=$(cat /etc/group | grep neard)
+    if [ -z "$near_group" ]
+    then
+        groupadd near
+    else
+        # Do nothing
+    fi
+    # Adding an unprivileged user for the neard service
+    neard_user=$(cat /etc/passwd | grep neard)
+    if [ -z "$neard_user" ]
+    then
+        adduser --system --quiet neard || true
+    else
+        # Do nothing
+    fi
+
 }
 
 # Creating a system service that will run with the non privilaged service account neard-guildnet
@@ -172,8 +187,7 @@ function create_neard_service
 {
     # Copy Guildnet Files to a suitable location
     sudo mkdir -p /usr/lib/near/guildnet
-    wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/main/nearcore/install/neard.service
-    sudo cp neard.service /usr/lib/systemd/neard.service
+    wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/main/nearcore/install/neard.service --output-file /usr/lib/systemd/neard.service
     ln -s /usr/lib/near/neard.service /etc/systemd/system/neard.service
     
     cd /tmp/near
@@ -187,7 +201,9 @@ function create_neard_service
     echo '* Adding logfile conf for neard'
     sudo mkdir -p /usr/lib/systemd/journald.conf.d
     sudo wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/main/nearcore/install/near.conf --output-file /usr/lib/systemd/journald.conf.d/neard.conf
-
+    
+    echo '* Deleting temp files'
+    rm -rf /tmp/near/binaries/
     echo '* The NEARD service is installed and ready to be enabled and started'
     echo '* Use "sudo systemctl enable /usr/lib/systemd/neard.service" to enable the service then use "sudo systemctl start neard" to start the service'
     echo '* The data files for the neard service are located here -->  /usr/lib/near/guildnet/ '
