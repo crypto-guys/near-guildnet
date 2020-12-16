@@ -190,6 +190,7 @@ function create_neard_service
 
     echo '* The NEARD service is installed and ready to be enabled and started'
     echo '* Use "sudo systemctl enable /usr/lib/systemd/neard.service" to enable the service then use "sudo systemctl start neard" to start the service'
+    echo '* The data files for the neard service are located here -->  /usr/lib/near/guildnet/ '
 }
 # END Functions
 #######################################################################################################
