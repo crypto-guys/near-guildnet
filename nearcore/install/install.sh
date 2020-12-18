@@ -112,12 +112,11 @@ function launch_container
     echo "* Pausing for 15 seconds while the container initializes"
     sleep 15
     echo "* Install Required Packages"
-    lxc exec ${vm_name} -- sh -c "apt-get -qq update"
-    lxc exec ${vm_name} -- sh -c "apt-get -qq upgrade"
-    lxc exec ${vm_name} -- sh -c "apt-get -qq autoremove"
-    lxc exec ${vm_name} -- sh -c "apt-get -qq autoclean"
-    lxc exec ${vm_name} -- sh -c "apt-get -y install git curl snapd squashfs-tools libclang-dev build-essential g++ make cmake clang libssl-dev libudev-dev"
-    lxc exec ${vm_name} -- sh -c "snap install rustup --classic"
+    lxc exec ${vm_name} /bin/bash
+    apt-get --qq update && apt-get --qq upgrade
+    apt-get -qq autoremove && apt-get -qq autoclean
+    apt-get -y install git curl snapd squashfs-tools libclang-dev build-essential g++ make cmake clang libssl-dev
+    snap install rustup --classic
     lxc exec ${vm_name} -- sh -c "rustup default nightly"
 }
 
@@ -206,7 +205,39 @@ function create_neard_service
     echo '* Use "sudo systemctl enable /usr/lib/systemd/neard.service" to enable the service then use "sudo systemctl start neard" to start the service'
     echo '* The data files for the neard service are located here -->  /usr/lib/near/guildnet/ '
 }
-# END Functions
+
+function verify_install 
+{
+    echo '* Starting verification of the neard system service installation'
+    installed_version=$(neard --version)
+    neard_status_check=$(sudo systemctl status neard)
+    echo '* Verify ---  Was the neard binary file installed correctly?'
+    neard_user_check=$(cat /etc/passwd | grep neard)
+    if [ -z "$installed_version" ]
+    then
+    echo '* The neard binary file is not active please check /usr/local/bin/ and look for errors above'
+    return 1
+    fi
+    echo '* Verify --- Does the installed neard version match the intended version?'
+    if [ "$installed_version" != "$NEAR_VERSION" ]
+    then
+    echo '* The installed neard binary version is not what we intended to build. Please check for any errors above'
+    return 1
+    fi
+    echo '* Verfify --- Can systemd access the unit file?'
+    if [ "$neard_status_check" == "Unit neard.service could not be found." ]
+    then
+    echo '* The neard service is not available please check for errors above'
+    return 1
+    fi
+    echo '* Verify --- Does the neard user exist on the system?'
+    if [ -z "$neard_user_check" ]
+    then
+    echo '* The neard user account (neard) has not been created something failed with the install script'
+    return 1
+    fi
+}
+    echo '* Verification of the installation is complete. success!!!'
 #######################################################################################################
 
 
@@ -226,4 +257,5 @@ if [ "$NEARD_INSTALL" == "y" ]
 then
 create_user_and_group
 create_neard_service
+verify_install
 fi
