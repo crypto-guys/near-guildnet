@@ -8,9 +8,9 @@ set -eu
 # Get Ubuntu Version so we build the right one 
 RELEASE=$(lsb_release -c -s)
 # Change this to compile a different Version 
-NEAR_VERSION="1.16.2"
+NEAR_VERSION="1.17.0-rc.2"
 # Change this to use a different repo
-NEAR_REPO="https://github.com/solutions-crypto/nearcore.git"
+NEAR_REPO="https://github.com/near-guildnet/nearcore.git"
 vm_name="compiler"
  
 ############## 
@@ -116,10 +116,9 @@ function launch_container
     lxc exec ${vm_name} -- sh -c "apt-get -qq upgrade"
     lxc exec ${vm_name} -- sh -c "apt-get -qq autoremove"
     lxc exec ${vm_name} -- sh -c "apt-get -qq autoclean"
-    lxc exec ${vm_name} -- sh -c "apt-get -y install git curl snapd squashfs-tools libclang-dev build-essential iperf llvm runc gcc g++ g++-multilib make cmake clang pkg-config libssl-dev libudev-dev libx32stdc++6-7-dbg lib32stdc++6-7-dbg python3-dev"
+    lxc exec ${vm_name} -- sh -c "apt-get -y install git curl snapd squashfs-tools libclang-dev build-essential g++ make cmake clang libssl-dev libudev-dev"
     lxc exec ${vm_name} -- sh -c "snap install rustup --classic"
     lxc exec ${vm_name} -- sh -c "rustup default nightly"
-    lxc exec ${vm_name} -- sh -c "rustup update"
 }
 
 function compile_source
@@ -129,7 +128,8 @@ function compile_source
     echo "* Switching Version"
     lxc exec ${vm_name} -- sh -c "cd /tmp/src/nearcore && git checkout $NEAR_VERSION"
     echo "* Attempting to compile"
-    lxc exec ${vm_name} -- sh -c "cd /tmp/src/nearcore && make release"
+    lxc exec ${vm_name} -- sh -c "cd /tmp/src/nearcore && cargo build -p neard --release"
+    lxc exec ${vm_name} -- sh -c "cd /tmp/src/nearcore && cargo build -p keypair-generator --release"    
     lxc exec ${vm_name} -- sh -c "mkdir ~/binaries"
     lxc exec ${vm_name} -- sh -c "cd /tmp/src/nearcore/target/release/ && mv near nearcore"
     lxc exec ${vm_name} -- sh -c "cd /tmp/src/nearcore/target/release/ && cp /tmp/src/nearcore/target/release/neard ~/binaries/"
