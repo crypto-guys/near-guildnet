@@ -8,9 +8,9 @@ set -eu
 # Get Ubuntu Version so we build the right one 
 RELEASE=$(lsb_release -c -s)
 # Change this to compile a different Version 
-NEAR_VERSION="1.17.0-rc.2"
+NEAR_VERSION="1.16.2"
 # Change this to use a different repo
-NEAR_REPO="https://github.com/near-guildnet/nearcore.git"
+NEAR_REPO="https://github.com/solutions-crypto/nearcore.git"
 vm_name="compiler"
  
 ############## 
@@ -174,7 +174,7 @@ function create_user_and_group
     neard_user=$(cat /etc/passwd | grep neard)
     if [ -z "$neard_user" ]
     then
-        adduser --system --quiet neard || true
+        adduser --system --home /home/neard --disabled-login --ingroup near neard || true
     else
         # Do nothing
     fi
@@ -185,15 +185,18 @@ function create_user_and_group
 function create_neard_service
 {
     # Copy Guildnet Files to a suitable location
-    wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/main/nearcore/install/neard.service --output-file /etc/systemd/system/neard.service    
+    mkdir /home/neard/service
+    wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/main/nearcore/install/neard.service --output-file /home/neard/service/neard.service    
+    sudo ln -s /home/neard/service/neard.service /etc/systemd/system/neard.service
     
     cd /tmp/near
     tar -xf nearcore.tar
     sudo cp -p /tmp/near/binaries/* /usr/local/bin
 
     echo '* Getting the correct files and fixing permissions'
-    sudo neard --home /usr/lib/near/guildnet/ init --download-genesis --chain-id guildnet --account-id "$VALIDATOR_ID"
-    sudo chown -R neard-guildnet:near -R /usr/lib/near
+    sudo mkdir -p /home/neard/.near/guildnet
+    sudo neard --home /home/neard/.near/guildnet init --download-genesis --chain-id guildnet --account-id "$VALIDATOR_ID"
+    sudo chown -R neard-guildnet:near -R /home/neard/.near
 
     echo '* Adding logfile conf for neard'
     sudo mkdir -p /usr/lib/systemd/journald.conf.d
@@ -202,8 +205,10 @@ function create_neard_service
     echo '* Deleting temp files'
     rm -rf /tmp/near/binaries/
     echo '* The NEARD service is installed and ready to be enabled and started'
-    echo '* Use "sudo systemctl enable /usr/lib/systemd/neard.service" to enable the service then use "sudo systemctl start neard" to start the service'
-    echo '* The data files for the neard service are located here -->  /usr/lib/near/guildnet/ '
+    echo '* Use "sudo systemctl enable neard.service" to enable the service to run on boot'
+    echo '* Use "sudo systemctl start neard" to start the service'
+    echo '* Once enabled and workng the service will start upon every system boot'
+    echo '* The data files for the neard service are located here -->  /home/neard/.near/guildnet '
 }
 
 function verify_install 
