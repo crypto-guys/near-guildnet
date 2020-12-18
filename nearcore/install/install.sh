@@ -186,9 +186,7 @@ function create_user_and_group
 function create_neard_service
 {
     # Copy Guildnet Files to a suitable location
-    sudo mkdir -p /usr/lib/near/guildnet
-    wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/main/nearcore/install/neard.service --output-file /usr/lib/systemd/neard.service
-    ln -s /usr/lib/near/neard.service /etc/systemd/system/neard.service
+    wget https://raw.githubusercontent.com/crypto-guys/near-guildnet/main/nearcore/install/neard.service --output-file /etc/systemd/system/neard.service    
     
     cd /tmp/near
     tar -xf nearcore.tar
