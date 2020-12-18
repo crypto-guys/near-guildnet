@@ -2,13 +2,13 @@
 Description=NEAR Validator Service
 Documentation=https://github.com/near-guildnet/nearcore
 After=network-online.target
-Requires=network-online.target
+
 
 [Service]
 Type=simple
-User=neard-guildnet
+User=neard
 Group=near
-ExecStart=/usr/local/bin/neard --home /usr/lib/near/guildnet/ run
+ExecStart=/usr/local/bin/neard --home /home/neard/.near/guildnet/ run
 Restart=on-failure
 RestartSec=120
 # StandardOutput=append:/var/log/guildnet.log
