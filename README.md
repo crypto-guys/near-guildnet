@@ -109,9 +109,9 @@ For more information on using journalctl use this command
 
 Verify your install
 ```bash
-ls /usr/lib/near/guildnet
+ls /home/neard/.near/guildnet
 # validator_key.json  node_key.json  config.json  data  genesis.json
-cat /usr/lib/near/guildnet | grep public_key
+cat /home/neard/.near/guildnet validator_key.json | grep "public_key"
 ```
 Make sure the name is correct and take note of the public key.
 
@@ -172,10 +172,11 @@ npm -v
 Both should return versions.
 
 
-### Install near-cli
+### Install near-cli (The standard near-cli works no need for special software)
 ```bash
 sudo npm install -g near-cli
 ```
+
 ## Setting up your environment
 To use the guildnet network you need to update the environment via the command line.  
 Open a command prompt and run
