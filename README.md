@@ -165,18 +165,16 @@ PATH="$PATH"
 #### Check Node.js and npm version  
 ```bash
 node -v
-    
+    v14.15.3
 npm -v
+    6.14.9
 ```
 Both should return versions.
 
 
-### Install the guild's near-cli
+### Install near-cli
 ```bash
-git clone https://github.com/crypto-guys/near-cli.git 
-cd near-cli/
-npm install
-sudo npm install -g
+sudo npm install -g near-cli
 ```
 ## Setting up your environment
 To use the guildnet network you need to update the environment via the command line.  
